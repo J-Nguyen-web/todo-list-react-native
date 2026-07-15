@@ -5,13 +5,17 @@ import TaskCreateScreen from "../components/TaskCreateScreen.jsx";
 import ProfileScreen from "../components/ProfileScreen.jsx";
 import Settingscreen from "../components/SettingScreen.jsx";
 import { EvilIcons, Feather, FontAwesome6, MaterialIcons } from "@expo/vector-icons";
+import HomeNavigator from "./HomeNavigator.jsx";
 
 const Tabs = createBottomTabNavigator();
 
 export default function TabNavigator() {
     return (
-        <Tabs.Navigator>
-            <Tabs.Screen name="DailyNavigator" component={DailyScreen} options={{
+        <Tabs.Navigator screenOptions={{
+            tabBarStyle: {paddingTop:8 ,},
+            tabBarLabelStyle: {fontSize: 14},
+        }}>
+            <Tabs.Screen name="HomeNavigator" component={HomeNavigator} options={{
                 headerShown: false,
                 title: "Daily",
                 headerTitleAlign: 'center',
@@ -30,26 +34,26 @@ export default function TabNavigator() {
                 tabBarActiveTintColor: '#000000',
                 tabBarInactiveTintColor: '#000',
                 tabBarIcon: ({ focused ,color, size}) => (
-                    <EvilIcons name="calendar" size={ focused ? size+3 : size-3 } color= {color}
+                    <EvilIcons name="calendar" size={ focused ? size+11 : size+8 } color= {color}
                     />
                 ),                
             }}/>
             
             <Tabs.Screen name="TaskCreateNavigator" component={TaskCreateScreen} options={{
                 headerShown: false,
-                title: "Create your task",
+                title: "Create",
                 headerTitleAlign: 'center',
                 tabBarActiveTintColor: '#000000',
                 tabBarInactiveTintColor: '#000',
                 tabBarIcon: ({ focused ,color, size}) => (
-                    <MaterialIcons name="add-task" size={ focused ? size+3 : size-3 } color= {color}
+                    <MaterialIcons name="add-task" size={ focused ? size+3 : size+6 } color= {color}
                     />
                 ),                
             }}/>
             
             <Tabs.Screen name="ProfileNavigator" component={ProfileScreen} options={{
                 headerShown: false,
-                title: "Your profile",
+                title: "Profile",
                 headerTitleAlign: 'center',
                 tabBarActiveTintColor: '#000000',
                 tabBarInactiveTintColor: '#000',
