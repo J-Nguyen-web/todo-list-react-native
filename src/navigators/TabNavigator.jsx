@@ -34,7 +34,7 @@ export default function TabNavigator() {
                 tabBarActiveTintColor: '#000000',
                 tabBarInactiveTintColor: '#000',
                 tabBarIcon: ({ focused ,color, size}) => (
-                    <EvilIcons name="calendar" size={ focused ? size+11 : size+8 } color= {color}
+                    <EvilIcons name="calendar" size={ focused ? size+11 : size+9 } color= {color}
                     />
                 ),                
             }}/>
