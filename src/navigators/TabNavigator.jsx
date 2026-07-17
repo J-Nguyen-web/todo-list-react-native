@@ -1,9 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import DailyScreen from "../components/DailyScreen.jsx";
-import CalendarScreen from "../components/CalendarScreen.jsx";
-import TaskCreateScreen from "../components/TaskCreateScreen.jsx";
-import ProfileScreen from "../components/ProfileScreen.jsx";
-import Settingscreen from "../components/SettingScreen.jsx";
+import DailyScreen from "../screens/DailyScreen.jsx";
+import CalendarScreen from "../screens/CalendarScreen.jsx";
+import TaskCreateScreen from "../screens/TaskCreateScreen.jsx";
+import ProfileScreen from "../screens/ProfileScreen.jsx";
+import Settingscreen from "../screens/SettingScreen.jsx";
 import { EvilIcons, Feather, FontAwesome6, MaterialIcons } from "@expo/vector-icons";
 import HomeNavigator from "./HomeNavigator.jsx";
 

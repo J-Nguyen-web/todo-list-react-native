@@ -1,6 +1,8 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import { Dimensions, FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import CardTask from "../components/CardTask.jsx";
+import Heading from "../components/ui/Heading.jsx";
 
 const greeting = 'Good Morning' // todo changable depending on the hours of the day
 const username = 'Nguyen' // todo changable depending on the user.username
@@ -11,6 +13,22 @@ const backgroundImage = require('../../assets/HJZTBMVW8AEeDLM.jpg');
 const imageSource = Image.resolveAssetSource(backgroundImage);
 const IMAGE_HEIGHT = SCREEN_WIDTH * (imageSource.height / imageSource.width);
 const FADE_HEIGHT = 160; // fade starts 160 units before image ends
+
+const tasks =[
+    {
+        id: 1,
+        title: 'task1',
+        type: 'shoping',
+        completed: true
+    },
+    {
+        id: 2,
+        title: 'task2',
+        type: 'word',
+        completed: true
+    },
+        
+] 
 
 export default function HomeNavigator() {
     return (
@@ -45,12 +63,22 @@ export default function HomeNavigator() {
                 </View>
                 <View style={styles.taskContainer}>
                     <View style={styles.favoriteCategories}>
-                        <Text>Favorite Categories</Text>
-                        <Text>Edit</Text>
+                        <View style={styles.homeTaskHeader}>
+                            <Heading>Favorite Categories</Heading>
+                            <Heading>Edit</Heading>                            
+                        </View>
                     </View>
                     <View style={styles.dayliTasks}>
-                        <Text>Daily Tasks</Text>
-                        <Text>Edit</Text>
+                        <View style={styles.homeTaskHeader}>
+                            <Heading>Daily Tasks</Heading>
+                            <Heading>Edit</Heading>
+                        </View>
+
+                        <FlatList style={{flex: 1, backgroundColor: '#a01ad1', gap: 6}}
+                            data={tasks}
+                            renderItem={({ item }) => <CardTask {...item} />}
+                            keyExtractor={(item) => item.id}
+                        />
                     </View>
                 </View>
             </View>
@@ -108,17 +136,20 @@ const styles = StyleSheet.create({
         backgroundColor: '#19cc16',
         width: '90%',
         height: '30%',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingTop: 8,
     },
 
     dayliTasks: {
         flex: 1,
         backgroundColor: '#cb2828',
         width: '90%',
+        justifyContent: 'space-between',
+    },
+
+    homeTaskHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingTop: 8,        
-    }
+        paddingVertical: 8,
+        fontWeight: 800
+
+    },
 })
