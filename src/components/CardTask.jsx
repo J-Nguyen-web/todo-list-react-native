@@ -10,12 +10,10 @@ export default function CardTask({
 }) {
 
     const category = CATEGORY_CONFIG[type] ?? CATEGORY_CONFIG.personal
-    console.log(CATEGORY_CONFIG)
-    console.log(CATEGORY_CONFIG[type])
-    console.log(CATEGORY_CONFIG.personal)
 
     return (    
-        <View style={styles.cardContainer}>
+        <View style={[styles.cardContainer, {
+        borderLeftColor: category.color}]}>
 
             <View style={styles.leftPart}>
                 <Ionicons
@@ -53,6 +51,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#fff',
         borderRadius: 18,
+        borderLeftWidth: 6,
         padding: 16,
         marginVertical: 3,
 

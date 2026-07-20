@@ -6,6 +6,7 @@ import ProfileScreen from "../screens/ProfileScreen.jsx";
 import Settingscreen from "../screens/SettingScreen.jsx";
 import { EvilIcons, Feather, FontAwesome6, MaterialIcons } from "@expo/vector-icons";
 import HomeNavigator from "./HomeNavigator.jsx";
+import AllTaskScreen from "../screens/AllTaskScreen.jsx";
 
 const Tabs = createBottomTabNavigator();
 
@@ -63,7 +64,7 @@ export default function TabNavigator() {
                 ),                
             }}/>
             
-            <Tabs.Screen name="SettingNavigator" component={Settingscreen} options={{
+            <Tabs.Screen name="SettingNavigator" component={AllTaskScreen} options={{
                 headerShown: false,
                 title: "Settings",
                 headerTitleAlign: 'center',

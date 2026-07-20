@@ -17,15 +17,17 @@ const FADE_HEIGHT = 160; // fade starts 160 units before image ends
 const tasks =[
     {
         id: 1,
-        title: 'task1',
-        type: 'shoping',
+        title: 'task1=============================================',
+        type: 'Shopping',
+        time: '9:00',
         completed: true
     },
     {
         id: 2,
         title: 'task2',
-        type: 'word',
-        completed: true
+        type: 'Work',
+        time: '9:00',
+        completed: false
     },
         
 ] 
