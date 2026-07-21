@@ -1,5 +1,6 @@
-import { FlatList, StyleSheet, View, Text, Pressable } from "react-native";
+import { FlatList, StyleSheet, View, Text, Pressable, TouchableOpacity } from "react-native";
 import CardTask from "../components/CardTask.jsx";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 const categories = ['work', 'health'];
 const tasks =[
@@ -25,6 +26,20 @@ const tasks =[
 export default function AllTaskScreen() {
     return (
         <View style={styles.container}>
+            <View style={styles.header}>
+                <Text style={styles.title}>All Tasks</Text>
+
+                <View style={styles.actions}>
+                    <TouchableOpacity>
+                        <Ionicons name="search" size={25} color='#777' />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity>
+                        <MaterialIcons name="tune" size={25} color='#777' />
+                    </TouchableOpacity>
+                </View>
+            </View>
+
             <View style={styles.allCategories}>
                 <FlatList
                     contentContainerStyle={styles.categoryList}
@@ -56,6 +71,27 @@ export default function AllTaskScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        padding: 15,
+    },
+
+    header : {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+
+        marginTop: 20,
+        marginBottom: 20,
+    },
+
+    title: {
+        fontSize: 28,
+        fontWeight: '700',
+    },
+
+    actions: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 15,
     },
 
     categoryList: {
@@ -66,7 +102,6 @@ const styles = StyleSheet.create({
         paddingVertical: '3%',
         justifyContent: 'space-between',
         gap: 6,
-        padding: 8,
     },
     
     categoryButton: {
