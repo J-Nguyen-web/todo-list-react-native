@@ -1,35 +1,45 @@
 import { AntDesign } from "@expo/vector-icons";
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { globalColor } from "../globalStyles.js";
 
 export default function TaskCreateScreen() {
     return (
         <View style={styles.container}>
             <ScrollView>
-            <View style={styles.header}>
-                <View>
-                    <AntDesign name="close" size={25} color='black' />
+                <View style={styles.header}>
+                    <View>
+                        <AntDesign name="close" size={25} color='black' />
+                    </View>
+                    <Text style={styles.title}>Create Task</Text>
+                    <Text style={styles.save}>Save</Text>
                 </View>
-                <Text style={styles.title}>Create Task</Text>
-                <Text style={styles.save}>Save</Text>
-            </View>
-            <View style={styles.createContainer}>
-                <View>
-                    <Text style={styles.subTitle}>Task Title</Text>
-                    <TextInput
-                        placeholder="Just do it..."
-                        style={styles.textInput}
-                    />                
-                </View>
+                <View style={styles.createContainer}>
+                    <View>
+                        <Text style={styles.subTitle}>Task Title</Text>
+                        <TextInput
+                            placeholder="Just do it..."
+                            style={styles.textInput}
+                        />                
+                    </View>
 
-                <View>
-                    <Text style={styles.subTitle}>Description</Text>
-                    <TextInput
-                        placeholder="Write a note..."
-                        style={styles.textInput}
-                    />                
+                    <View>
+                        <Text style={styles.subTitle}>Description</Text>
+                        <TextInput
+                            placeholder="Write a note..."
+                            style={styles.textInput}
+                        />                
+                    </View>
+                    <View>
+                        <Text style={styles.subTitle}>Category</Text>
+                        <Text style={styles.save}><AntDesign name="plus" size={20} color={globalColor.orange} /> Create New Category</Text>
+                    </View>                
+                    <View>
+                        <Text style={styles.subTitle}>Sub-tasks</Text>
+                        <TouchableOpacity style={styles.save}><AntDesign name="plus" size={20} color={globalColor.orange} /> <Text>Add Sub-task</Text></TouchableOpacity>
+                    </View>
+
+
                 </View>
-                
-            </View>
             </ScrollView>
         </View>
     );    
@@ -69,7 +79,7 @@ const styles = StyleSheet.create({
     save: {
         fontSize: 18,
         fontWeight: '700',
-        color: '#ff9d00'
+        color: globalColor.orange
     },
 
     createContainer:{
