@@ -1,8 +1,18 @@
 import { AntDesign } from "@expo/vector-icons";
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView } from "react-native";
 import { globalColor } from "../globalStyles.js";
+import { Dropdown } from "react-native-element-dropdown";
+import DateTimePicker from "@react-native-community/datetimepicker"
+import { useState } from "react";
 
 export default function TaskCreateScreen() {
+
+    const [category, setCategory] = useState('');
+    const [date, setDate] = useState(new Date());
+    const [time, setTime] = useState(new Date());
+
+    const categories = ['work', 'daily', 'study'];
+
     return (
         <View style={styles.container}>
             <ScrollView>
@@ -28,17 +38,54 @@ export default function TaskCreateScreen() {
                             placeholder="Write a note..."
                             style={styles.textInput}
                         />                
-                    </View>
-                    <View>
-                        <Text style={styles.subTitle}>Category</Text>
-                        <Text style={styles.save}><AntDesign name="plus" size={20} color={globalColor.orange} /> Create New Category</Text>
                     </View>                
                     <View>
                         <Text style={styles.subTitle}>Sub-tasks</Text>
-                        <TouchableOpacity style={styles.save}><AntDesign name="plus" size={20} color={globalColor.orange} /> <Text>Add Sub-task</Text></TouchableOpacity>
+                        <TouchableOpacity style={styles.createNewElement}>
+                            <AntDesign name="plus" size={20} color={globalColor.orange} />
+                            <Text style={styles.save}>
+                                Add Sub-task
+                            </Text>
+                        </TouchableOpacity>
                     </View>
-
-
+                    <View>
+                        <Text style={styles.subTitle}>Category</Text>
+                        <Dropdown
+                            data={categories}
+                            labelField='label'
+                            valueField='value'
+                            placeholder='Category'
+                            value={category}
+                            onChange={item => setCategory(item.value)}
+                        />
+                        <TouchableOpacity style={styles.createNewElement}>
+                            <AntDesign name="plus" size={20} color={globalColor.orange} />
+                            <Text style={styles.save}>
+                                Create New Category
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                    {/* todo determinated the platform and use forAndroid pick */}
+                    <DateTimePicker
+                        value={date}
+                        mode="date"
+                        onChange={(event, selectedDate) => {
+                                if (selectedDate) {
+                                    setDate(selectedDate)
+                                }
+                            }
+                        }
+                    />
+                    <DateTimePicker
+                        value={time}
+                        mode="time"
+                        onChange={(event, selectedTime) => {
+                                if (selectedTime) {
+                                    setDate(selectedTime)
+                                }
+                            }
+                        }
+                    />
                 </View>
             </ScrollView>
         </View>
@@ -84,6 +131,10 @@ const styles = StyleSheet.create({
 
     createContainer:{
         justifyContent: 'space-between'
+    },
+    createNewElement: {
+        flexDirection: 'row',
+        gap: 6,
     },
 
     actions: {
