@@ -1,7 +1,24 @@
 import { FlatList } from "react-native";
 import CardCategory from "../components/CardCategory.jsx";
+import { tasks } from "../constants/tasks.js";
+import { useEffect, useState } from "react";
 
 export default function MySection() {
+
+    const [categories, setCategories] = useState();
+    
+    useEffect(() => {
+        const grouped = tasks.reduce((acc, task) => {
+            if (!acc[task.category]) {
+                acc[task.category] = [];
+            }
+
+            acc[task.category].push(task)
+            return acc
+        })
+        setCategories(grouped)
+    },[])
+    
     return (
         <View style={styles.container}>
                 <View style={styles.header}>
