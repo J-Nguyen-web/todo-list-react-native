@@ -1,12 +1,14 @@
-import { FlatList } from "react-native";
+import { FlatList, StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import CardCategory from "../components/CardCategory.jsx";
 import { tasks } from "../constants/tasks.js";
 import { useEffect, useState } from "react";
+import { globalColor } from "../globalStyles.js";
+import { AntDesign } from "@expo/vector-icons";
 
 export default function MySection() {
 
     const [categories, setCategories] = useState();
-    
+    console.log(categories)
     useEffect(() => {
         const grouped = tasks.reduce((acc, task) => {
             if (!acc[task.category]) {
@@ -15,7 +17,7 @@ export default function MySection() {
 
             acc[task.category].push(task)
             return acc
-        })
+        },{})
         setCategories(grouped)
     },[])
     
@@ -25,12 +27,14 @@ export default function MySection() {
                     <View>
                         <AntDesign name="close" size={25} color='black' />
                     </View>
-                    <Text style={styles.title}>My Section</Text>
+                    <Text style={styles.title}>
+                        My Section
+                    </Text>
                     <TouchableOpacity style={styles.save}>Edit</TouchableOpacity>
                 </View>
                 <FlatList
                     data={categories}
-                    renderItem={({item}) => <CardCategory {...item}/>}
+                    renderItem={({item}) => <CardCategory data={item}/>}
                 />
 
         </View>
