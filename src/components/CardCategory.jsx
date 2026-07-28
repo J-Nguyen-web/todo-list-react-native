@@ -1,17 +1,19 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 
 export default function CardCategory(
-  {item}
-) {
+   item) {
 
-console.log('ITEM',item)
+console.log('ITEM',item.data.tasks)
     return (
         <View style={styles.container}>
             <View>
-                {icon}
             </View>
-            <Text style={styles.category}>K{category}</Text>
-            <Text style={styles.taskCount}>{taskCount}</Text>
+            <Text style={styles.category}>
+                {item.data.category}
+            </Text>
+            <Text style={styles.taskCount}>
+                {item.data.tasks.length}
+            </Text>
         </View>
     );
 }
@@ -19,5 +21,12 @@ console.log('ITEM',item)
 const styles = StyleSheet.create({
     container: {
         flex:1,
+        flexDirection: 'row',
+        backgroundColor: '#f70000',
+        margin: 6,
     },
+
+    category: {
+        fontSize: 20
+    }
 })

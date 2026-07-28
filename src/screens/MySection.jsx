@@ -18,7 +18,8 @@ export default function MySection() {
             acc[task.category].push(task)
             return acc
         },{})
-        setCategories(grouped)
+        const categoriesArray = Object.entries(grouped).map(([category, tasks]) => ({category, tasks}));
+        setCategories(categoriesArray)
     },[])
     
     return (
@@ -35,8 +36,8 @@ export default function MySection() {
                 <FlatList
                     data={categories}
                     renderItem={({item}) => <CardCategory data={item}/>}
+                    keyExtractor={(item) => item.category}
                 />
-
         </View>
     );
 }
