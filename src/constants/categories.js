@@ -1,11 +1,13 @@
 export const CATEGORY_CONFIG = {
     Work: {
-        icon: 'briefcase',
+        Icon: 'SimpleLineIcons',
+        icon: 'briefcase-outline',
         color: '#6366f1',
         background: '#eef2ff',
     },
     Shopping: {
-        icon: 'cart',
+        Icon:   'MaterialCommunityIcons',
+        icon: 'cart-outline',
         color: '#14b8a6',
         background: '#ECFDF5',
     },

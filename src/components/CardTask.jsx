@@ -11,6 +11,8 @@ export default function CardTask({
 
     const category = CATEGORY_CONFIG[type] ?? CATEGORY_CONFIG.personal
 
+    const Icon = category.Icon
+
     return (    
         <View style={[styles.cardContainer, {
         borderLeftColor: category.color}]}>
@@ -22,7 +24,7 @@ export default function CardTask({
                     color={completed ? "#50a353" : "#999"}
                 />
                 {/* todo icons for categories based on type value */}
-                <MaterialCommunityIcons
+                <Icon
                     name={category.icon}
                     size={25}
                     color={category.color}
