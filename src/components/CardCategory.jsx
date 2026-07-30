@@ -1,21 +1,30 @@
 import { StyleSheet, View, Text } from "react-native";
+import { CATEGORY_CONFIG } from "../constants/categories.js";
 
 export default function CardCategory(
    item) {
 
-console.log('ITEM',item.data.tasks)
+    const category = CATEGORY_CONFIG[item.data.category] ?? CATEGORY_CONFIG.Personal
+    const Icon = category.Icon
+
     return (
-        <View style={styles.container}>
-            <View>
-                <View>
-                </View>
-                <Text style={styles.category}>
+        <View style={[styles.container, {backgroundColor: category.background}]}>
+            <View style={styles.category}>
+                <Icon
+                    name={category.icon}
+                    size={category.size}
+                    color={category.color}
+                />
+                <Text style={[styles.categoryTitle, {color: category.color}]}>
                     {item.data.category}
                 </Text>                
             </View>
 
-            <Text style={styles.taskCount}>
-                {item.data.tasks.length} tasks
+            <Text style={[styles.taskCount, {color: category.color}]}>
+                {item.data.tasks.length} 
+                <Text>
+                    tasks
+                </Text> 
             </Text>
         </View>
     );
@@ -35,6 +44,12 @@ const styles = StyleSheet.create({
     },
 
     category: {
+        flexDirection: 'row',
+        gap: 14,
+        alignItems: 'center'
+    },
+
+    categoryTitle: {
         fontSize: 20
     },
 

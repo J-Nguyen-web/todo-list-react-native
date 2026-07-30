@@ -1,30 +1,47 @@
+import { MaterialCommunityIcons, SimpleLineIcons } from "@expo/vector-icons";
+
 export const CATEGORY_CONFIG = {
     Work: {
-        Icon: 'SimpleLineIcons',
-        icon: 'briefcase-outline',
+        Icon: SimpleLineIcons,
+        icon: 'briefcase',
+        size: 25,
         color: '#6366f1',
-        background: '#eef2ff',
+        background: '#c8d3f8bd',
     },
     Shopping: {
-        Icon:   'MaterialCommunityIcons',
-        icon: 'cart-outline',
+        Icon:   MaterialCommunityIcons,
+        icon: 'cart-variant',
+        size: 33,
         color: '#14b8a6',
-        background: '#ECFDF5',
+        background: '#9feec9c1',
     },
-    personel: {
+    Personal: {
+        Icon: MaterialCommunityIcons,
         icon: 'account',
-        color: '#7948ec',
-        background: '#e7ddfc',
+        size: 25,
+        color: '#a548ec',
+        background: '#dccefaa6',
     },
     Study: {
-        icon: 'book-open-page-variant',
+        Icon: MaterialCommunityIcons,
+        icon: 'book-open-page-variant-outline',
+        size: 28,
         color: '#f5950b',
-        background: '#FFFBEB',
+        background: '#f0e0a3af',
+    },
+    Daily: {
+        Icon: MaterialCommunityIcons,
+        icon: 'book-open-page-variant-outline',
+        size: 28,
+        color: '#00a0a0',
+        background: '#d6fcfc',
     },
     Health: {
-        icon: 'heart',
+        Icon: MaterialCommunityIcons,
+        icon: 'heart-pulse',
+        size: 31,
         color: '#ec4899',
-        background: '#fdf2f8',
+        background: '#fdd2e9b7',
     },
     
 }
