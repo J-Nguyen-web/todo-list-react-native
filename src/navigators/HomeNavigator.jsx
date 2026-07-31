@@ -76,7 +76,7 @@ export default function HomeNavigator() {
                             <Heading>Edit</Heading>
                         </View>
 
-                        <FlatList style={{flex: 1, backgroundColor: '#a01ad1', gap: 6}}
+                        <FlatList style={{flex: 1, gap: 6}}
                             data={tasks}
                             renderItem={({ item }) => <CardTask {...item} />}
                             keyExtractor={(item) => item.id}
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     taskContainer: {
         position: 'absolute',
         bottom: 0,
-        backgroundColor: '#000',
+        backgroundColor: '#fff',
         width: '100%',
         height: '60%',
         borderTopRightRadius: 30,
@@ -135,15 +135,15 @@ const styles = StyleSheet.create({
     },
 
     favoriteCategories: {
-        backgroundColor: '#19cc16',
-        width: '90%',
+        backgroundColor: '#fff',
+        width: '100%',
         height: '30%',
     },
 
     dayliTasks: {
         flex: 1,
-        backgroundColor: '#cb2828',
-        width: '90%',
+        backgroundColor: '#ffffff',
+        width: '100%',
         justifyContent: 'space-between',
     },
 
@@ -151,6 +151,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingVertical: 8,
+        margin:18,
         fontWeight: 800
 
     },

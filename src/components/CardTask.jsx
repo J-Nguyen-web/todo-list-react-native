@@ -23,12 +23,14 @@ export default function CardTask({
                     size={28}
                     color={completed ? "#50a353" : "#999"}
                 />
-                {/* todo icons for categories based on type value */}
-                <Icon
-                    name={category.icon}
-                    size={25}
-                    color={category.color}
-                />
+                <View style={styles.icon}>
+                    <Icon
+                        name={category.icon}
+                        size={category.size}
+                        color={category.color}
+                    />                    
+                </View>
+
                 <View style={styles.titleContainer}>
                     <Text style={{flexWrap: 'wrap'}}>{title}</Text>
                     <Text style={{ color: category.color}}>{type}</Text>
@@ -53,18 +55,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#fff',
         borderRadius: 18,
+        borderWidth: 1,
         borderLeftWidth: 6,
+        borderColor: '#bbbbbb',
         padding: 16,
+        margin: 8,
         marginVertical: 3,
 
         // iOs
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
-            height: 2,
+            height: 8,
         },
-        shadowOpacity: 0.08,
-        shadowRadius: 14,
+        shadowOpacity: 0.25,
+        shadowRadius: 6,
 
         // android (combines all above)
         elevation: 3
@@ -75,6 +80,11 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         width: '70%',
         gap: '3%',
+    },
+
+    icon: {
+        width: 35,
+        height: 35
     },
 
     titleContainer: {
