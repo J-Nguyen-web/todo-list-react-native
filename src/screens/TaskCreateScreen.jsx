@@ -14,14 +14,18 @@ export default function TaskCreateScreen() {
     const categories = ['work', 'daily', 'study'];
 
     return (
-        <View style={styles.container}>
-            <ScrollView>
+        <ScrollView contentContainerStyle={styles.container}>
+            <View>
                 <View style={styles.header}>
                     <View>
                         <AntDesign name="close" size={25} color='black' />
                     </View>
                     <Text style={styles.title}>Create Task</Text>
-                    <Text style={styles.save}>Save</Text>
+                    <TouchableOpacity style={styles.save}>
+                        <Text>
+                            Save
+                        </Text>
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.createContainer}>
                     <View>
@@ -87,15 +91,21 @@ export default function TaskCreateScreen() {
                         }
                     />
                 </View>
-            </ScrollView>
-        </View>
+            </View>            
+                <TouchableOpacity style={styles.saveButton}>
+                    <Text style={{fontSize: 20, color: '#fff'}}>
+                        Save Task
+                    </Text>
+                </TouchableOpacity>
+        </ScrollView>
     );    
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         padding: 15,
+        justifyContent: 'space-between'
     },
 
     header : {
@@ -149,4 +159,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 11,
         paddingVertical: 8,
     },
+    saveButton: {
+        height: 50,
+        backgroundColor: globalColor.orange,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+
+    }
 })

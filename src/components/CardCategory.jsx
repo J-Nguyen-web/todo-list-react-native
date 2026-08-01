@@ -21,10 +21,7 @@ export default function CardCategory(
             </View>
 
             <Text style={[styles.taskCount, {color: category.color}]}>
-                {item.data.tasks.length} 
-                <Text>
-                    tasks
-                </Text> 
+                {item.data.tasks.length} tasks
             </Text>
         </View>
     );
@@ -34,6 +31,8 @@ const styles = StyleSheet.create({
     container: {
         flex:1,
         flexDirection: 'row',
+        // borderWidth: 1,
+        // borderColor: '#cacaca',
         borderRadius: 14,
         backgroundColor: '#f70000',
         justifyContent: 'space-between',
@@ -41,6 +40,18 @@ const styles = StyleSheet.create({
         height: 60,
         margin: 6,
         padding: 18,
+
+        // iOs
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 3,
+        },
+        shadowOpacity: 0.15,
+        shadowRadius: 3,
+
+        // android (combines all above)
+        elevation: 3
     },
 
     category: {

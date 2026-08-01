@@ -18,7 +18,20 @@ const tasks =[
         time: '9:00',
         completed: false
     },
-        
+    {
+        id: 3,
+        title: 'task3',
+        type: 'Study',
+        time: '9:00',
+        completed: false
+    },
+    {
+        id: 4,
+        title: 'task4',
+        type: 'Health',
+        time: '9:00',
+        completed: false
+    },
 ] 
 
 

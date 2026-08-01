@@ -4,9 +4,10 @@ import CalendarScreen from "../screens/CalendarScreen.jsx";
 import TaskCreateScreen from "../screens/TaskCreateScreen.jsx";
 import ProfileScreen from "../screens/ProfileScreen.jsx";
 import Settingscreen from "../screens/SettingScreen.jsx";
-import { EvilIcons, Feather, FontAwesome6, MaterialIcons } from "@expo/vector-icons";
+import { EvilIcons, Feather, FontAwesome, FontAwesome5, FontAwesome6, MaterialIcons } from "@expo/vector-icons";
 import HomeNavigator from "./HomeNavigator.jsx";
 import AllTaskScreen from "../screens/AllTaskScreen.jsx";
+import MySection from "../screens/MySection.jsx";
 
 const Tabs = createBottomTabNavigator();
 
@@ -52,7 +53,19 @@ export default function TabNavigator() {
                 ),                
             }}/>
             
-            <Tabs.Screen name="ProfileNavigator" component={ProfileScreen} options={{
+            <Tabs.Screen name="SettingNavigator" component={AllTaskScreen} options={{
+                headerShown: false,
+                title: "All Tasks",
+                headerTitleAlign: 'center',
+                tabBarActiveTintColor: '#000000',
+                tabBarInactiveTintColor: '#000',
+                tabBarIcon: ({ focused ,color, size}) => (
+                    // <Feather name="settings" size={ focused ? size+3 : size-3 } color={color}/>
+                    <FontAwesome    name="tasks" size={focused ? size+3 : size -3 } color={color} />
+                ),                
+            }}/>
+
+            <Tabs.Screen name="ProfileNavigator" component={MySection} options={{
                 headerShown: false,
                 title: "Profile",
                 headerTitleAlign: 'center',
@@ -60,18 +73,6 @@ export default function TabNavigator() {
                 tabBarInactiveTintColor: '#000',
                 tabBarIcon: ({ focused ,color, size}) => (
                     <FontAwesome6 name="user" size={ focused ? size+3 : size-3 } color= {color}
-                    />
-                ),                
-            }}/>
-            
-            <Tabs.Screen name="SettingNavigator" component={AllTaskScreen} options={{
-                headerShown: false,
-                title: "Settings",
-                headerTitleAlign: 'center',
-                tabBarActiveTintColor: '#000000',
-                tabBarInactiveTintColor: '#000',
-                tabBarIcon: ({ focused ,color, size}) => (
-                    <Feather name="settings" size={ focused ? size+3 : size-3 } color= {color}
                     />
                 ),                
             }}/>

@@ -31,7 +31,11 @@ export default function MySection() {
                     <Text style={styles.title}>
                         My Section
                     </Text>
-                    <TouchableOpacity style={styles.save}>Edit</TouchableOpacity>
+                    <TouchableOpacity style={styles.save}>
+                        <Text>
+                            Edit
+                        </Text>
+                    </TouchableOpacity>
                 </View>
                 <FlatList
                     data={categories}
