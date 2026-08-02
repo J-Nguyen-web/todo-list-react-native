@@ -21,29 +21,33 @@ export default function TaskCreateScreen() {
                         <AntDesign name="close" size={25} color='black' />
                     </View>
                     <Text style={styles.title}>Create Task</Text>
-                    <TouchableOpacity style={styles.save}>
-                        <Text>
+                    <TouchableOpacity>
+                        <Text style={styles.save}>
                             Save
                         </Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.createContainer}>
-                    <View>
+                    <View style={styles.partition}>
                         <Text style={styles.subTitle}>Task Title</Text>
                         <TextInput
+                            multiline
+                            textAlignVertical = 'top'
                             placeholder="Just do it..."
                             style={styles.textInput}
                         />                
                     </View>
 
-                    <View>
+                    <View style={styles.partition}>
                         <Text style={styles.subTitle}>Description</Text>
                         <TextInput
+                            multiline
+                            textAlignVertical = 'top'
                             placeholder="Write a note..."
                             style={styles.textInput}
                         />                
                     </View>                
-                    <View>
+                    <View style={styles.partition}>
                         <Text style={styles.subTitle}>Sub-tasks</Text>
                         <TouchableOpacity style={styles.createNewElement}>
                             <AntDesign name="plus" size={20} color={globalColor.orange} />
@@ -52,13 +56,21 @@ export default function TaskCreateScreen() {
                             </Text>
                         </TouchableOpacity>
                     </View>
-                    <View>
+                    <View style={styles.partition}>
                         <Text style={styles.subTitle}>Category</Text>
                         <Dropdown
+                            style={styles.dropdown}
+                            containerStyle={styles.dropdownMenu}
+                            itemContainerStyle={styles.dropdownItem}
+                            itemTextStyle={styles.dropdownItemText}
+                            placeholderStyle={styles.placeholder}
+                            selectedTextStyle={styles.selectedText}
+                            iconStyle={styles.icon}
+                            activeColor="#fff"
                             data={categories}
                             labelField='label'
                             valueField='value'
-                            placeholder='Category'
+                            placeholder='Select Category'
                             value={category}
                             onChange={item => setCategory(item.value)}
                         />
@@ -117,6 +129,11 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
 
+    partition: {
+        marginBottom: 35,
+        gap: 8
+    },
+
     title: {
         fontSize: 28,
         fontWeight: '700',
@@ -131,6 +148,74 @@ const styles = StyleSheet.create({
         height: 60,
         borderWidth: 1,
         borderRadius: 8,
+        padding:6,
+    },
+
+    dropdown: {
+        height: 56,
+        background: '#fff',
+
+        borderWidth: 1,
+        borderColor: '#c8c8c8',
+        borderRadius: 16,
+
+        paddingHorizontal: 16,
+
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 3
+        },
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+
+        elevation: 3
+    },
+
+    placeholder: {
+        fontSize: 16,
+        color: '#b0b6bd'
+    },
+
+    selectedText: {
+        fontSize: 16,
+        color: '#253455',
+        fontWeight: '600',
+    },
+
+    icon: {
+        width: 22,
+        height: 22,
+        tintColor: '#606b81'
+    },
+
+    dropdownMenu: {
+        marginTop: 8,
+
+        borderRadius: 16,
+        borderWidth: 0,
+
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 3
+        },
+        shadowOpacity: 0.18,
+        shadowRadius: 11,
+
+        elevation: 3        
+
+    },
+
+    dropdownItem: {
+        borderRadius: 14,
+        marginHorizontal: 8,
+        marginVertical: 3,
+    },
+
+    dropdownItemText: {
+        fontSize: 16,
+        color: '#253455',
     },
 
     save: {
