@@ -1,4 +1,4 @@
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView } from "react-native";
 import { globalColor } from "../globalStyles.js";
 import { Dropdown } from "react-native-element-dropdown";
@@ -10,6 +10,8 @@ export default function TaskCreateScreen() {
     const [category, setCategory] = useState('');
     const [date, setDate] = useState(new Date());
     const [time, setTime] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [showTimeicker, setShowTimeicker] = useState(false);
 
     const categories = ['work', 'daily', 'study'];
 
@@ -82,26 +84,47 @@ export default function TaskCreateScreen() {
                         </TouchableOpacity>
                     </View>
                     {/* todo determinated the platform and use forAndroid pick */}
-                    <DateTimePicker
-                        value={date}
-                        mode="date"
-                        onChange={(event, selectedDate) => {
-                                if (selectedDate) {
-                                    setDate(selectedDate)
+                    <View style={styles.dateTimeContainer}>
+                        <TouchableOpacity 
+                            style={styles.dateField} 
+                            onPress={()=> setShowDatePicker(true)}
+                        >
+                            <Feather name='calendar' size={18} color='#666' />
+                            <Text>rendered date</Text>
+                        </TouchableOpacity>
+                        {showDatePicker && (
+                            <DateTimePicker
+                                value={date}
+                                mode="date"
+                                onChange={(event, selectedDate) => {
+                                        if (selectedDate) {
+                                            setDate(selectedDate)
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                    />
-                    <DateTimePicker
-                        value={time}
-                        mode="time"
-                        onChange={(event, selectedTime) => {
-                                if (selectedTime) {
-                                    setDate(selectedTime)
+                            />
+                        )}
+
+                        <TouchableOpacity
+                            style={styles.dateField} 
+                            onPress={()=> setShowTimePicker(true)}
+                        >
+                            <Feather name='clock' size={18} color='#666' />
+                            <Text>rendered tim</Text>
+                        </TouchableOpacity>
+                        {showDatePicker && (
+                            <DateTimePicker
+                                value={date}
+                                mode="date"
+                                onChange={(event, selectedDate) => {
+                                        if (selectedDate) {
+                                            setDate(selectedDate)
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                    />
+                            />
+                        )}                        
+                    </View>
                 </View>
             </View>            
                 <TouchableOpacity style={styles.saveButton}>
@@ -153,7 +176,7 @@ const styles = StyleSheet.create({
 
     dropdown: {
         height: 56,
-        background: '#fff',
+        backgroundColor: '#fff',
 
         borderWidth: 1,
         borderColor: '#c8c8c8',
@@ -167,7 +190,7 @@ const styles = StyleSheet.create({
             height: 3
         },
         shadowOpacity: 0.15,
-        shadowRadius: 8,
+        shadowRadius: 3,
 
         elevation: 3
     },
@@ -186,7 +209,7 @@ const styles = StyleSheet.create({
     icon: {
         width: 22,
         height: 22,
-        tintColor: '#606b81'
+        tintColor: '#816060'
     },
 
     dropdownMenu: {
@@ -216,6 +239,40 @@ const styles = StyleSheet.create({
     dropdownItemText: {
         fontSize: 16,
         color: '#253455',
+    },
+
+    dateTimeContainer: {
+        flexDirection: 'row',
+        gap: 11,
+    },
+
+    dateField: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+
+        height: 50,
+        paddingHorizontal: 14,
+
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#e5e7eb',
+        borderRadius: 14,
+
+    },
+
+    TimeField: {
+        width: 120,
+        flexDirection: 'row',
+        alignItems: 'center',
+
+        height: 50,
+        paddingHorizontal: 14,
+
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#e5e7eb',
+        borderRadius: 11,
     },
 
     save: {
