@@ -1,4 +1,4 @@
-import { AntDesign, Feather } from "@expo/vector-icons";
+import { AntDesign, Feather, FontAwesome } from "@expo/vector-icons";
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView } from "react-native";
 import { globalColor } from "../globalStyles.js";
 import { Dropdown } from "react-native-element-dropdown";
@@ -89,7 +89,7 @@ export default function TaskCreateScreen() {
                             style={styles.dateField} 
                             onPress={()=> setShowDatePicker(true)}
                         >
-                            <Feather name='calendar' size={18} color='#666' />
+                            <FontAwesome name='calendar' size={18} color='#666' />
                             <Text>rendered date</Text>
                         </TouchableOpacity>
                         {showDatePicker && (

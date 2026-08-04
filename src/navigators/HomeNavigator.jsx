@@ -3,6 +3,7 @@ import { Dimensions, FlatList, Image, StyleSheet, Text, View } from "react-nativ
 import { SafeAreaView } from "react-native-safe-area-context";
 import CardTask from "../components/CardTask.jsx";
 import Heading from "../components/ui/Heading.jsx";
+import CardFavCategories from "../components/CardFavCategories.jsx";
 
 const greeting = 'Good Morning' // todo changable depending on the hours of the day
 const username = 'Nguyen' // todo changable depending on the user.username
@@ -31,6 +32,7 @@ const tasks =[
     },
         
 ] 
+
 
 export default function HomeNavigator() {
     return (
@@ -69,6 +71,11 @@ export default function HomeNavigator() {
                             <Heading>Favorite Categories</Heading>
                             <Heading>Edit</Heading>                            
                         </View>
+                        <FlatList
+                            data={tasks}
+                            renderItem={({item}) => <CardFavCategories {...item}/>}
+                            keyExtractor={(item) => item.id}
+                        />
                     </View>
                     <View style={styles.dayliTasks}>
                         <View style={styles.homeTaskHeader}>

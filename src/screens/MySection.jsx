@@ -8,7 +8,7 @@ import { AntDesign } from "@expo/vector-icons";
 export default function MySection() {
 
     const [categories, setCategories] = useState();
-    console.log(categories)
+    
     useEffect(() => {
         const grouped = tasks.reduce((acc, task) => {
             if (!acc[task.category]) {
