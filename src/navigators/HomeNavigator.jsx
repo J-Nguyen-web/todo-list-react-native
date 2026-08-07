@@ -5,6 +5,8 @@ import CardTask from "../components/CardTask.jsx";
 import Heading from "../components/ui/Heading.jsx";
 import CardFavCategories from "../components/CardFavCategories.jsx";
 import { tasks } from "../constants/tasks.js";
+import { useEffect, useState } from "react";
+import categoriesGroup from "../util/categoriesGroup.js";
 
 const greeting = 'Good Morning' // todo changable depending on the hours of the day
 const username = 'Nguyen' // todo changable depending on the user.username
@@ -16,26 +18,14 @@ const imageSource = Image.resolveAssetSource(backgroundImage);
 const IMAGE_HEIGHT = SCREEN_WIDTH * (imageSource.height / imageSource.width);
 const FADE_HEIGHT = 160; // fade starts 160 units before image ends
 
-// const tasks =[
-//     {
-//         id: 1,
-//         title: 'task1=============================================',
-//         type: 'Shopping',
-//         time: '9:00',
-//         completed: true
-//     },
-//     {
-//         id: 2,
-//         title: 'task2',
-//         type: 'Work',
-//         time: '9:00',
-//         completed: false
-//     },
-        
-// ] 
-
-
 export default function HomeNavigator() {
+
+    const [favCategories, setFavCategories] = useState();
+
+    useEffect(() => {
+        setFavCategories(categoriesGroup(tasks))
+    },[])
+
     return (
         <SafeAreaView 
             style={{flex: 1, backgroundColor: '#ffffff'}}
@@ -73,9 +63,10 @@ export default function HomeNavigator() {
                             <Heading>Edit</Heading>                            
                         </View>
                         <FlatList
-                            data={tasks}
+                            data={favCategories}
                             renderItem={({item}) => <CardFavCategories {...item}/>}
-                            keyExtractor={(item) => item.id}
+                            keyExtractor={(item) => item.category}
+                            horizontal
                         />
                     </View>
                     <View style={styles.dayliTasks}>

@@ -4,18 +4,19 @@ import { CATEGORY_CONFIG } from "../constants/categories.js";
 
 export default function CardTask({
     title,
-    type,
+    category,
+    description,
     completed,
     time
 }) {
 
-    const category = CATEGORY_CONFIG[type] ?? CATEGORY_CONFIG.personal
+    const categoryType = CATEGORY_CONFIG[category] ?? CATEGORY_CONFIG.personal
 
-    const Icon = category.Icon
+    const Icon = categoryType.Icon
 
     return (    
         <View style={[styles.cardContainer, {
-        borderLeftColor: category.color}]}>
+        borderLeftColor: categoryType.color}]}>
 
             <View style={styles.leftPart}>
                 <Ionicons
@@ -25,15 +26,15 @@ export default function CardTask({
                 />
                 <View style={styles.icon}>
                     <Icon
-                        name={category.icon}
-                        size={category.size}
-                        color={category.color}
+                        name={categoryType.icon}
+                        size={categoryType.size}
+                        color={categoryType.color}
                     />                    
                 </View>
 
                 <View style={styles.titleContainer}>
                     <Text style={{flexWrap: 'wrap'}}>{title}</Text>
-                    <Text style={{ color: category.color}}>{type}</Text>
+                    <Text style={{ color: categoryType.color}}>{category}</Text>
                 </View>
             </View>
             <View style={styles.rightPart}>

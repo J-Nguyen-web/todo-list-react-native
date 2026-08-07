@@ -6,7 +6,7 @@ export default function categoriesGroup(tasks) {
 
             acc[task.category].push(task)
             return acc
-        })
+        }, {})
         
         return Object.entries(grouped).map(([category, tasks]) => ({category, tasks}));
 }

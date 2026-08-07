@@ -4,22 +4,14 @@ import { tasks } from "../constants/tasks.js";
 import { useEffect, useState } from "react";
 import { globalColor } from "../globalStyles.js";
 import { AntDesign } from "@expo/vector-icons";
+import categoriesGroup from "../util/categoriesGroup.js";
 
 export default function MySection() {
 
     const [categories, setCategories] = useState();
     
     useEffect(() => {
-        const grouped = tasks.reduce((acc, task) => {
-            if (!acc[task.category]) {
-                acc[task.category] = [];
-            }
-
-            acc[task.category].push(task)
-            return acc
-        },{})
-        const categoriesArray = Object.entries(grouped).map(([category, tasks]) => ({category, tasks}));
-        setCategories(categoriesArray)
+        setCategories(categoriesGroup(tasks))
     },[])
     
     return (

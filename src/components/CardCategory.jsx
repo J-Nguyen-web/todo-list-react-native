@@ -1,8 +1,7 @@
 import { StyleSheet, View, Text } from "react-native";
 import { CATEGORY_CONFIG } from "../constants/categories.js";
 
-export default function CardCategory(
-   item) {
+export default function CardCategory(item) {
 
     const category = CATEGORY_CONFIG[item.data.category] ?? CATEGORY_CONFIG.Personal
     const Icon = category.Icon
