@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text, View, } from "react-native";
+import { TouchableOpacity, Text, View, StyleSheet, } from "react-native";
 import { CATEGORY_CONFIG } from "../constants/categories.js";
 
 export default function CardFavCategories(item) { 
@@ -12,10 +12,21 @@ export default function CardFavCategories(item) {
     const Icon = categoryType.Icon
     
     return (
-        <TouchableOpacity>
+        <TouchableOpacity style={[styles.cardContainer, {backgroundColor: categoryType.background}]}>
             <Icon name={categoryType.icon} size={categoryType.size} color={categoryType.color} />
-            <Text>{item.category}</Text>
-            <Text>{item.tasks.length}</Text>
+            <Text style={{color: categoryType.color}}>{item.category}</Text>
+            <Text style={{color: categoryType.color}}>{item.tasks.length>1 ?  'tasks' : 'task'}</Text>
         </TouchableOpacity>
     );
 }
+
+const styles = StyleSheet.create({
+
+    cardContainer: {
+        borderRadius: 16,
+        padding: 16,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center'
+    }
+})

@@ -62,12 +62,13 @@ export default function HomeNavigator() {
                             <Heading>Favorite Categories</Heading>
                             <Heading>Edit</Heading>                            
                         </View>
-                        <FlatList
-                            data={favCategories}
-                            renderItem={({item}) => <CardFavCategories {...item}/>}
-                            keyExtractor={(item) => item.category}
-                            horizontal
-                        />
+                        <View style={styles.favCardContainer}>
+                            <FlatList
+                                data={favCategories}
+                                renderItem={({item}) => <CardFavCategories {...item}/>}
+                                keyExtractor={(item) => item.category}
+                                horizontal
+                            />
                     </View>
                     <View style={styles.dayliTasks}>
                         <View style={styles.homeTaskHeader}>
@@ -80,6 +81,7 @@ export default function HomeNavigator() {
                             renderItem={({ item }) => <CardTask {...item} />}
                             keyExtractor={(item) => item.id}
                         />
+                    </View>
                     </View>
                 </View>
             </View>
@@ -123,7 +125,7 @@ const styles = StyleSheet.create({
     taskContainer: {
         position: 'absolute',
         bottom: 0,
-        backgroundColor: '#fff',
+        backgroundColor: '#890202',
         width: '100%',
         height: '60%',
         borderTopRightRadius: 30,
@@ -134,14 +136,22 @@ const styles = StyleSheet.create({
     },
 
     favoriteCategories: {
-        backgroundColor: '#fff',
+        backgroundColor: '#1500ff',
         width: '100%',
         height: '30%',
     },
 
+    favCardContainer: {
+        flexDirection: 'row',
+        width: '100%',
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
+        alignContent: 'flex-end'
+    },
+
     dayliTasks: {
         flex: 1,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#1eff00',
         width: '100%',
         justifyContent: 'space-between',
     },
@@ -150,8 +160,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingVertical: 8,
-        margin:18,
-        fontWeight: 800
+        marginHorizontal:18,
+        fontWeight: 800,
+        backgroundColor: '#c602c6'
 
     },
 })
