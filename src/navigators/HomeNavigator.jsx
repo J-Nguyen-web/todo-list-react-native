@@ -62,12 +62,16 @@ export default function HomeNavigator() {
                             <Heading>Favorite Categories</Heading>
                             <Heading>Edit</Heading>                            
                         </View>
-                        <View style={styles.favCardContainer}>
                             <FlatList
                                 data={favCategories}
                                 renderItem={({item}) => <CardFavCategories {...item}/>}
                                 keyExtractor={(item) => item.category}
                                 horizontal
+                                contentContainerStyle={{
+                                    flexGrow: 1,// it makes container to fill the available space and justifyContent works bcoz it push items
+                                    justifyContent: 'flex-end',
+                                    gap: 6
+                                }}
                             />
                     </View>
                     <View style={styles.dayliTasks}>
@@ -76,12 +80,11 @@ export default function HomeNavigator() {
                             <Heading>Edit</Heading>
                         </View>
 
-                        <FlatList style={{flex: 1, gap: 6}}
+                        <FlatList style={{flex: 1, gap: 6, backgroundColor: '#fff'}}
                             data={tasks}
                             renderItem={({ item }) => <CardTask {...item} />}
                             keyExtractor={(item) => item.id}
                         />
-                    </View>
                     </View>
                 </View>
             </View>
@@ -125,7 +128,7 @@ const styles = StyleSheet.create({
     taskContainer: {
         position: 'absolute',
         bottom: 0,
-        backgroundColor: '#890202',
+        backgroundColor: '#fff  ',
         width: '100%',
         height: '60%',
         borderTopRightRadius: 30,
@@ -136,7 +139,7 @@ const styles = StyleSheet.create({
     },
 
     favoriteCategories: {
-        backgroundColor: '#1500ff',
+        backgroundColor: '#fff',
         width: '100%',
         height: '30%',
     },
@@ -144,14 +147,11 @@ const styles = StyleSheet.create({
     favCardContainer: {
         flexDirection: 'row',
         width: '100%',
-        justifyContent: 'flex-end',
-        alignItems: 'flex-end',
-        alignContent: 'flex-end'
     },
 
     dayliTasks: {
         flex: 1,
-        backgroundColor: '#1eff00',
+        backgroundColor: '#fff',
         width: '100%',
         justifyContent: 'space-between',
     },
@@ -159,10 +159,10 @@ const styles = StyleSheet.create({
     homeTaskHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: 8,
+        paddingBottom: 8,
         marginHorizontal:18,
         fontWeight: 800,
-        backgroundColor: '#c602c6'
+        backgroundColor: '#fff'
 
     },
 })

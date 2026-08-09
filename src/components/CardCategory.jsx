@@ -20,7 +20,7 @@ export default function CardCategory(item) {
             </View>
 
             <Text style={[styles.taskCount, {color: category.color}]}>
-                {item.data.tasks.length} tasks
+                {item.data.tasks.length} {item.data.tasks.length > 1 ? 'tasks' : 'task'}
             </Text>
         </View>
     );

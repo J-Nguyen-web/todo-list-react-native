@@ -31,10 +31,10 @@ export const CATEGORY_CONFIG = {
     },
     Daily: {
         Icon: MaterialCommunityIcons,
-        icon: 'book-open-page-variant-outline',
+        icon: 'sun-clock-outline',
         size: 28,
-        color: '#00a0a0',
-        background: '#d6fcfc',
+        color: '#79850d',
+        background: '#ebff9d',
     },
     Health: {
         Icon: MaterialCommunityIcons,

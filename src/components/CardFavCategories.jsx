@@ -15,7 +15,9 @@ export default function CardFavCategories(item) {
         <TouchableOpacity style={[styles.cardContainer, {backgroundColor: categoryType.background}]}>
             <Icon name={categoryType.icon} size={categoryType.size} color={categoryType.color} />
             <Text style={{color: categoryType.color}}>{item.category}</Text>
-            <Text style={{color: categoryType.color}}>{item.tasks.length>1 ?  'tasks' : 'task'}</Text>
+            <Text style={{color: categoryType.color}}>
+                {item.tasks.length} {item.tasks.length>1 ?  'tasks' : 'task'}
+            </Text>
         </TouchableOpacity>
     );
 }
@@ -24,9 +26,11 @@ const styles = StyleSheet.create({
 
     cardContainer: {
         borderRadius: 16,
+        width: 80,
         padding: 16,
         alignContent: 'center',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        gap: 8,
     }
 })
