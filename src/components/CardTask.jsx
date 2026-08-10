@@ -66,10 +66,10 @@ const styles = StyleSheet.create({
         // iOs
         shadowColor: '#000',
         shadowOffset: {
-            width: 0,
+            width: 3,
             height: 3,
         },
-        shadowOpacity: 0.15,
+        shadowOpacity: 0.25,
         shadowRadius: 3,
 
         // android (combines all above)

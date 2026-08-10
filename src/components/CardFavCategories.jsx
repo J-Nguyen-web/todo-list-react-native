@@ -26,11 +26,23 @@ const styles = StyleSheet.create({
 
     cardContainer: {
         borderRadius: 16,
-        width: 80,
+        width: 70,
         padding: 16,
+        margin: 8,
         alignContent: 'center',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 8,
+        gap: 6,
+
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 3,
+            height: 3,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3,
+
+        // android (combines all above)
+        elevation: 3        
     }
 })

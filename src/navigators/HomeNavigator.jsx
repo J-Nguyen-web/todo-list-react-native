@@ -69,8 +69,7 @@ export default function HomeNavigator() {
                                 horizontal
                                 contentContainerStyle={{
                                     flexGrow: 1,// it makes container to fill the available space and justifyContent works bcoz it push items
-                                    justifyContent: 'flex-end',
-                                    gap: 6
+                                    justifyContent: 'flex-end'
                                 }}
                             />
                     </View>
