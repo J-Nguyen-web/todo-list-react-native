@@ -1,40 +1,9 @@
 import { FlatList, StyleSheet, View, Text, Pressable, TouchableOpacity } from "react-native";
 import CardTask from "../components/CardTask.jsx";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { tasks } from "../constants/tasks.js";
 
 const categories = ['work', 'health'];
-const tasks =[
-    {
-        id: 1,
-        title: 'task1=============================================',
-        type: 'Shopping',
-        time: '9:00',
-        completed: true
-    },
-    {
-        id: 2,
-        title: 'task2',
-        type: 'Work',
-        time: '9:00',
-        completed: false
-    },
-    {
-        id: 3,
-        title: 'task3',
-        type: 'Study',
-        time: '9:00',
-        completed: false
-    },
-    {
-        id: 4,
-        title: 'task4',
-        type: 'Health',
-        time: '9:00',
-        completed: false
-    },
-] 
-
-
 
 export default function AllTaskScreen() {
     return (

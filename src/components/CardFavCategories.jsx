@@ -3,7 +3,7 @@ import { CATEGORY_CONFIG } from "../constants/categories.js";
 
 export default function CardFavCategories(item) { 
     
-    const favTypes = ['Work', 'Study']
+    const favTypes = ['Work', 'Study', 'Shopping', 'Health','Daily', 'Personal']
     if (!favTypes.includes(item.category)){
         return null
     }
@@ -26,7 +26,8 @@ const styles = StyleSheet.create({
 
     cardContainer: {
         borderRadius: 16,
-        width: 70,
+        width: 110,
+        height: 90,
         padding: 16,
         margin: 8,
         alignContent: 'center',

@@ -20,7 +20,7 @@ export const CATEGORY_CONFIG = {
         icon: 'account',
         size: 25,
         color: '#a548ec',
-        background: '#dccefaa6',
+        background: '#eee6ff',
     },
     Study: {
         Icon: MaterialCommunityIcons,

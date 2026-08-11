@@ -1,12 +1,13 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { Dimensions, FlatList, Image, StyleSheet, Text, View } from "react-native";
+import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CardTask from "../components/CardTask.jsx";
 import Heading from "../components/ui/Heading.jsx";
 import CardFavCategories from "../components/CardFavCategories.jsx";
 import { tasks } from "../constants/tasks.js";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import categoriesGroup from "../util/categoriesGroup.js";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const greeting = 'Good Morning' // todo changable depending on the hours of the day
 const username = 'Nguyen' // todo changable depending on the user.username
@@ -19,8 +20,21 @@ const IMAGE_HEIGHT = SCREEN_WIDTH * (imageSource.height / imageSource.width);
 const FADE_HEIGHT = 160; // fade starts 160 units before image ends
 
 export default function HomeNavigator() {
-
+    
+    const favListRef = useRef(null);
     const [favCategories, setFavCategories] = useState();
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(false);
+
+    const handleFavScroll = (event) => {
+        const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
+
+        const offsetX = contentOffset.x;
+        const maxOffset = Math.max(0, contentSize.width - layoutMeasurement.width);
+
+        setCanScrollLeft(offsetX > 5);
+        setCanScrollRight(maxOffset > 5 && offsetX < maxOffset - 5);
+    }
 
     useEffect(() => {
         setFavCategories(categoriesGroup(tasks))
@@ -63,15 +77,78 @@ export default function HomeNavigator() {
                             <Heading>Edit</Heading>                            
                         </View>
                             <FlatList
+                                ref={favListRef}
                                 data={favCategories}
                                 renderItem={({item}) => <CardFavCategories {...item}/>}
                                 keyExtractor={(item) => item.category}
                                 horizontal
-                                contentContainerStyle={{
-                                    flexGrow: 1,// it makes container to fill the available space and justifyContent works bcoz it push items
-                                    justifyContent: 'flex-end'
-                                }}
+                                contentContainerStyle={styles.favListContent}
+                                showsHorizontalScrollIndicator={false}
+                                onScroll={handleFavScroll}
+                                scrollEventThrottle={16}
                             />
+
+                            {canScrollLeft && (
+                                <View style={styles.leftScrollControl}>
+                                    <LinearGradient
+                                        colors={[
+                                            'rgba(255,255,255,0)',
+                                            '#ffffff'
+                                        ]}
+                                        start={{x: 0, y: 0}}
+                                        end={{x: 1, y: 0}}
+                                        style={styles.leftFade}
+                                    />
+
+                                    <TouchableOpacity
+                                        style={styles.chevronButton}
+                                        onPress={() =>
+                                            favListRef.current?.scrollToOffset({
+                                                offset: 0,
+                                                animated: true,
+
+                                            })
+                                        }
+                                    >
+                                        <MaterialCommunityIcons
+                                            name="chevron-left"
+                                            size={25}
+                                            color='#777'
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+
+                            {canScrollRight && (
+                                <View style={styles.rightScrollControl}>
+                                    <LinearGradient
+                                        colors={[
+                                            'rgba(255,255,255,0)',
+                                            '#ffffff'
+                                        ]}
+                                        start={{x: 0, y: 0}}
+                                        end={{x: 1, y: 0}}
+                                        style={styles.rightFade}
+                                        pointerEvents="none"
+                                    />
+
+                                    <TouchableOpacity
+                                        style={styles.chevronButton}
+                                        onPress={() =>
+                                            favListRef.current?.scrollToEnd({
+                                                animated: true,
+                                            })
+                                        }
+                                    >
+                                        <MaterialCommunityIcons
+                                            name="chevron-right"
+                                            size={25}
+                                            color='#777'
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                            
                     </View>
                     <View style={styles.dayliTasks}>
                         <View style={styles.homeTaskHeader}>
@@ -144,8 +221,47 @@ const styles = StyleSheet.create({
     },
 
     favCardContainer: {
+        position: 'relative',
         flexDirection: 'row',
         width: '100%',
+    },
+
+    favListContent: {
+        flexGrow: 1,
+        justifyContent: 'flex-end',
+        gap: 8,
+        paddingHorizontal: 15,
+    },
+
+    leftScrollControl: {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        bottom: 0,
+        width: 65,
+        zIndex: 6,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+
+    rightScrollControl: {
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        bottom: 0,
+        width: 65,
+        zIndex: 6,
+        flexDirection: 'row-reverse',
+        alignItems: 'center',
+    },
+
+    chevronButton: {
+        width: 28,
+        height: 28,
+        borderRadius: 14,
+        backgroundColor: '#fffffff',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 
     dayliTasks: {
