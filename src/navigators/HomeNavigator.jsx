@@ -112,7 +112,7 @@ export default function HomeNavigator() {
                                     >
                                         <MaterialCommunityIcons
                                             name="chevron-left"
-                                            size={25}
+                                            size={35}
                                             color='#777'
                                         />
                                     </TouchableOpacity>
@@ -142,7 +142,7 @@ export default function HomeNavigator() {
                                     >
                                         <MaterialCommunityIcons
                                             name="chevron-right"
-                                            size={25}
+                                            size={35}
                                             color='#777'
                                         />
                                     </TouchableOpacity>
@@ -256,8 +256,8 @@ const styles = StyleSheet.create({
     },
 
     chevronButton: {
-        width: 28,
-        height: 28,
+        width: 58,
+        height: 58,
         borderRadius: 14,
         backgroundColor: '#fffffff',
         justifyContent: 'center',
