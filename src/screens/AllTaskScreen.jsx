@@ -2,16 +2,22 @@ import { FlatList, StyleSheet, View, Text, Pressable, TouchableOpacity } from "r
 import CardTask from "../components/CardTask.jsx";
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { tasks } from "../constants/tasks.js";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import categoriesGroup from "../util/categoriesGroup.js";
 
-const categories = ['work', 'health'];
+// const categories = ['work', 'health'];
 
 export default function AllTaskScreen() {
 
     const categoryList = useRef(null);
+    const [categories, setCategories] = useState();
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
+
+    useEffect(() => {
+        setCategories(categoriesGroup(tasks))
+    },[])    
 
     const handleFavScroll = (event) => {
         const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
@@ -22,6 +28,8 @@ export default function AllTaskScreen() {
         setCanScrollLeft(offsetX > 5);
         setCanScrollRight(maxOffset > 5 && offsetX < maxOffset - 5);
     }    
+    
+    console.log(categories)
     
     return (
         <View style={styles.container}>
@@ -50,7 +58,7 @@ export default function AllTaskScreen() {
                         <Pressable
                             style={styles.categoryButton}
                         >
-                            <Text style={{ fontSize: 18,}}>{item}</Text>
+                            <Text style={{ fontSize: 18,}}>{item.category}</Text>
                         </Pressable>}
                     showsHorizontalScrollIndicator={false}
                     onScroll={handleFavScroll}
