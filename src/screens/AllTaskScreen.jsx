@@ -5,6 +5,7 @@ import { tasks } from "../constants/tasks.js";
 import { useEffect, useRef, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import categoriesGroup from "../util/categoriesGroup.js";
+import { CATEGORY_CONFIG } from "../constants/categories.js";
 
 // const categories = ['work', 'health'];
 
@@ -14,6 +15,7 @@ export default function AllTaskScreen() {
     const [categories, setCategories] = useState();
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
+    // const categoryType = CATEGORY_CONFIG[]
 
     useEffect(() => {
         setCategories(categoriesGroup(tasks))
@@ -56,8 +58,9 @@ export default function AllTaskScreen() {
                     keyExtractor={(item) => item}
                     renderItem={({item}) => 
                         <Pressable
-                            style={styles.categoryButton}
+                            style={[styles.categoryButton,{backgroundColor: CATEGORY_CONFIG[item.category].background}]}
                         >
+                            <Text style={{ fontSize: 18,}}>{item.category}</Text>
                             <Text style={{ fontSize: 18,}}>{item.category}</Text>
                         </Pressable>}
                     showsHorizontalScrollIndicator={false}
@@ -178,8 +181,8 @@ const styles = StyleSheet.create({
     
     categoryButton: {
         backgroundColor: '#f8873d',
-        borderRadius: 20,
-        paddingHorizontal: 11,
+        borderRadius: 16,
+        paddingHorizontal: 14,
         paddingVertical: 8,
     },
 
