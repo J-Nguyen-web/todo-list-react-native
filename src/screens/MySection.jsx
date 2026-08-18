@@ -31,7 +31,7 @@ export default function MySection() {
                 </View>
                 <FlatList
                     data={categories}
-                    renderItem={({item}) => <CardCategory data={item}/>}
+                    renderItem={({item}) => <CardCategory {...item} variant="sectionCategories"/>}
                     keyExtractor={(item) => item.category}
                 />
         </View>

@@ -8,6 +8,7 @@ import { tasks } from "../constants/tasks.js";
 import { useEffect, useRef, useState } from "react";
 import categoriesGroup from "../util/categoriesGroup.js";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import CardCategory from "../components/CardCategory.jsx";
 
 const greeting = 'Good Morning' // todo changable depending on the hours of the day
 const username = 'Nguyen' // todo changable depending on the user.username
@@ -79,7 +80,7 @@ export default function HomeNavigator() {
                             <FlatList
                                 ref={favListRef}
                                 data={favCategories}
-                                renderItem={({item}) => <CardFavCategories {...item}/>}
+                                renderItem={({item}) => <CardCategory {...item} variant="favorite"/>}
                                 keyExtractor={(item) => item.category}
                                 horizontal
                                 contentContainerStyle={styles.favListContent}

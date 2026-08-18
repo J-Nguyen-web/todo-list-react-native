@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import categoriesGroup from "../util/categoriesGroup.js";
 import { CATEGORY_CONFIG } from "../constants/categories.js";
+import CardCategory from "../components/CardCategory.jsx";
 
 // const categories = ['work', 'health'];
 
@@ -56,13 +57,7 @@ export default function AllTaskScreen() {
                     horizontal
                     data={categories}
                     keyExtractor={(item) => item}
-                    renderItem={({item}) => 
-                        <Pressable
-                            style={[styles.categoryButton,{backgroundColor: CATEGORY_CONFIG[item.category].background}]}
-                        >
-                            <Text style={{ fontSize: 18,}}>{item.category}</Text>
-                            <Text style={{ fontSize: 18,}}>{item.category}</Text>
-                        </Pressable>}
+                    renderItem={({item}) => <CardCategory {...item} variant="allTasksCategories" />}
                     showsHorizontalScrollIndicator={false}
                     onScroll={handleFavScroll}
                     scrollEventThrottle={16}
