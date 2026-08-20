@@ -4,17 +4,26 @@ import RootNavigator from './src/navigators/RootNavigator.jsx';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { enableScreens } from 'react-native-screens';
 import { NavigationContainer } from '@react-navigation/native';
+import { SQLiteProvider } from 'expo-sqlite';
+import { migrateDbIfNeeded } from './src/database/migrations.js';
 
 enableScreens();
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-        <NavigationContainer>
-            <StatusBar style='auto'/>
-                    <RootNavigator />
-        </NavigationContainer>
-    </SafeAreaProvider>
+    <SQLiteProvider
+        databaseName='todo.db'
+        // actual database persist file
+        onInit={migrateDbIfNeeded}
+    >
+        <SafeAreaProvider>
+            <NavigationContainer>
+                <StatusBar style='auto'/>
+                        <RootNavigator />
+            </NavigationContainer>
+        </SafeAreaProvider>        
+    </SQLiteProvider>
+
 
   )
 }
