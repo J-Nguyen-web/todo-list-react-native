@@ -1,9 +1,10 @@
 import { AntDesign, Feather, FontAwesome } from "@expo/vector-icons";
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Button } from "react-native";
 import { globalColor } from "../globalStyles.js";
 import { Dropdown } from "react-native-element-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { useState } from "react";
+import { useSQLiteContext } from "expo-sqlite";
 
 export default function TaskCreateScreen() {
 
@@ -12,6 +13,28 @@ export default function TaskCreateScreen() {
     const [time, setTime] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimeicker, setShowTimeicker] = useState(false);
+
+    const db = useSQLiteContext();
+    async function createTestTask(){
+        await db.runAsync(
+            `
+            INSERT INTO tasks (
+                title,
+                description,
+                completed,
+                created_at,
+                updated_at
+            )
+            VALUES (?, ?, ? ,? ,?)
+            `,
+            "Buy milk",
+            "Buy milk from the supermarket",
+            0,
+            new Date().toISOString(),
+            new Date().toISOString(),
+        );
+        console.log("Task created!");
+    }
 
     const categories = ['work', 'daily', 'study'];
 
@@ -127,11 +150,17 @@ export default function TaskCreateScreen() {
                     </View>
                 </View>
             </View>            
-                <TouchableOpacity style={styles.saveButton}>
+                {/* <TouchableOpacity style={styles.saveButton}>
                     <Text style={{fontSize: 20, color: '#fff'}}>
                         Save Task
                     </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
+                <View>
+                    <Button
+                        title="Create test task"
+                        onPress={createTestTask}
+                    />
+                </View>
         </ScrollView>
     );    
 }

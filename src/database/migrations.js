@@ -41,6 +41,11 @@ export async function migrateDbIfNeeded(db) {
             title TEXT NOT NULL,
             title TEXT NOT NULL,
             completed INTEGER NOT NULL DEFAULT 0,
-        )
-        `);
+            position INTEGER NOT NULL DEFAULT 0,
+
+            FOREIGN KEY (task_id)            
+                REFERENCES tasks(id)
+                ON DELETE CASCADE
+        );
+    `);
 }
