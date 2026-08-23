@@ -24,9 +24,13 @@ export default function TaskCreateScreen() {
                 completed,
                 created_at,
                 updated_at
+            // thats the row with the keys
             )
             VALUES (?, ?, ? ,? ,?)
+            // question marks represents the properties (title, description, completed, created_at, updated_at)
+            
             `,
+        // thats the example of given values
             "Buy milk",
             "Buy milk from the supermarket",
             0,
