@@ -40,6 +40,67 @@ export default function TaskCreateScreen() {
         console.log("Task created!");
     }
 
+    async function createTask(db, task){
+        const now = new Date().toISOString();
+
+        const result = await db.withExclusiveTransactionAsync(async () => {
+
+            const taskResult = await db.runAsync(
+                `
+                INSERT INTO tasks (
+                    title,
+                    description,
+                    completed,
+                    created_at,
+                    updated_at
+                // thats the row with the keys
+                )
+                VALUES (?, ?, ? ,? ,?)
+                // question marks represents the properties (title, description, completed, created_at, updated_at)
+                
+                `,
+                task.title,
+                task.description || null,
+                task.categoryId || null,
+                0,
+                task.scheduleType || "none",
+                task.date || null,
+                task.startTime || null,
+                task.endTime || null,
+                task.recurrenceType || "none",
+                task.recurrenceData
+                    ? JSON.stringify(task.recurrenceData)
+                    : null,
+                now,
+                now
+            );
+            
+            const taskId = taskResult.lastInsertRowId;
+
+            for (let i = 0; i< task.subtask.length; i++) {
+                const subtask = task.subtasks[i];
+
+                await db.runAsync(
+                    `
+                    INSERT INTO subtasks (
+                        task_id,
+                        title,
+                        completed,
+                        position
+                    )
+                        VALUES (?, ?, ?, ?)
+                    `,
+                    taskId,
+                    subtask.title,
+                    0,
+                    i
+                );
+            }
+            return taskId;
+        });
+        return result;
+    }
+
     const categories = ['work', 'daily', 'study'];
 
     return (

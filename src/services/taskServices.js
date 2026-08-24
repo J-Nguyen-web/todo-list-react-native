@@ -37,3 +37,13 @@ export async function createTask(db, task) {
     
     return result.lastInsertRowId;
 }
+
+export async function getTasks(db) {
+    const tasks = await db.getAllAsync(`
+        SELECT *
+        FROM tasks
+        ORDER BY created_at DESC
+    `)
+
+    return tasks;
+}
