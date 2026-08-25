@@ -3,7 +3,7 @@ export async function migrateDbIfNeeded(db) {
         PRAGMA journal_mode = WAL;
 
         PRAGMA foreign_keys = ON;
-        // key = value, for easier relationships
+        -- key = value, for easier relationships
 
         CREATE TABLE IF NOT EXISTS categories (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,9 +36,9 @@ export async function migrateDbIfNeeded(db) {
                 ON DELETE SET NULL
         );
 
-        CREATE TABLE IS NOT EXISTS subtasks (
+        CREATE TABLE IF NOT EXISTS subtasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
+            task_id INTEGER NOT NULL,
             title TEXT NOT NULL,
             completed INTEGER NOT NULL DEFAULT 0,
             position INTEGER NOT NULL DEFAULT 0,

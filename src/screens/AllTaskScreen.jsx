@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, View, Text, Pressable, TouchableOpacity } from "react-native";
+import { FlatList, StyleSheet, View, Text, Pressable, TouchableOpacity, Button } from "react-native";
 import CardTask from "../components/CardTask.jsx";
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { tasks } from "../constants/tasks.js";
@@ -7,6 +7,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import categoriesGroup from "../util/categoriesGroup.js";
 import { CATEGORY_CONFIG } from "../constants/categories.js";
 import CardCategory from "../components/CardCategory.jsx";
+import { getTasks } from "../services/taskServices.js";
+import { useSQLiteContext } from "expo-sqlite";
 
 // const categories = ['work', 'health'];
 
@@ -32,7 +34,13 @@ export default function AllTaskScreen() {
         setCanScrollRight(maxOffset > 5 && offsetX < maxOffset - 5);
     }    
     
-    console.log(categories)
+    const db = useSQLiteContext();
+    async function handleGetTasks() {
+        console.log('inside')
+        const tasks = await getTasks(db)
+
+        console.log(tasks)
+    }
     
     return (
         <View style={styles.container}>
@@ -133,7 +141,10 @@ export default function AllTaskScreen() {
                         
                 />                
             </View>
-            
+            <Button 
+                title="SHow tasks"
+                onPress={handleGetTasks}
+            />
         </View>
     );
 }

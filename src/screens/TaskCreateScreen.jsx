@@ -24,10 +24,10 @@ export default function TaskCreateScreen() {
                 completed,
                 created_at,
                 updated_at
-            // thats the row with the keys
+            -- thats the row with the keys
             )
             VALUES (?, ?, ? ,? ,?)
-            // question marks represents the properties (title, description, completed, created_at, updated_at)
+            -- question marks represents the properties (title, description, completed, created_at, updated_at)
             
             `,
         // thats the example of given values
@@ -40,65 +40,80 @@ export default function TaskCreateScreen() {
         console.log("Task created!");
     }
 
-    async function createTask(db, task){
-        const now = new Date().toISOString();
+    async function handleCreateTask(db, task){
+        try {
+            console.log('CREATE')
+            const now = new Date().toISOString();
 
-        const result = await db.withExclusiveTransactionAsync(async () => {
+            const result = await db.withExclusiveTransactionAsync(async (txn) => {
 
-            const taskResult = await db.runAsync(
-                `
-                INSERT INTO tasks (
-                    title,
-                    description,
-                    completed,
-                    created_at,
-                    updated_at
-                // thats the row with the keys
-                )
-                VALUES (?, ?, ? ,? ,?)
-                // question marks represents the properties (title, description, completed, created_at, updated_at)
-                
-                `,
-                task.title,
-                task.description || null,
-                task.categoryId || null,
-                0,
-                task.scheduleType || "none",
-                task.date || null,
-                task.startTime || null,
-                task.endTime || null,
-                task.recurrenceType || "none",
-                task.recurrenceData
-                    ? JSON.stringify(task.recurrenceData)
-                    : null,
-                now,
-                now
-            );
-            
-            const taskId = taskResult.lastInsertRowId;
-
-            for (let i = 0; i< task.subtask.length; i++) {
-                const subtask = task.subtasks[i];
-
-                await db.runAsync(
+                const taskResult = await txn.runAsync(
                     `
-                    INSERT INTO subtasks (
-                        task_id,
+                    INSERT INTO tasks (
                         title,
+                        description,
+                        category_id
                         completed,
-                        position
+                        schedule_type,
+                        date,
+                        start_time,
+                        end_time,
+                        recurrence_type,
+                        recurrence_date,
+                        created_at,
+                        updated_at
+                    -- thats the row with the keys
                     )
-                        VALUES (?, ?, ?, ?)
+                    VALUES (?, ?, ? ,? ,?, ?, ? ,? ,?, ? ,? ,?)
+                    -- question marks represents the properties (title, description, completed, created_at, updated_at)
+                    
                     `,
-                    taskId,
-                    subtask.title,
+                    task.title,
+                    task.description || null,
+                    task.categoryId || null,
                     0,
-                    i
+                    task.scheduleType || "none",
+                    task.date || null,
+                    task.startTime || null,
+                    task.endTime || null,
+                    task.recurrenceType || "none",
+                    task.recurrenceData
+                        ? JSON.stringify(task.recurrenceData)
+                        : null,
+                    now,
+                    now
                 );
-            }
-            return taskId;
-        });
-        return result;
+                
+                const taskId = taskResult.lastInsertRowId;
+
+                for (let i = 0; i< task.subtask.length; i++) {
+                    const subtask = task.subtasks[i];
+
+                    await txn.runAsync(
+                        `
+                        INSERT INTO subtasks (
+                            task_id,
+                            title,
+                            completed,
+                            position
+                        )
+                            VALUES (?, ?, ?, ?)
+                        `,
+                        taskId,
+                        subtask.title,
+                        0,
+                        i
+                    );
+                }
+                return taskId;
+            });
+
+            console.log("Created TASK ID: ",result)
+            return result;
+
+        } catch (error) {
+            console.error("CREATE TASK ERROR: ", error)
+        }
     }
 
     const categories = ['work', 'daily', 'study'];
