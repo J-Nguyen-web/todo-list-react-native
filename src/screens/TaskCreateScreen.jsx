@@ -16,7 +16,7 @@ export default function TaskCreateScreen() {
 
     const db = useSQLiteContext();
     async function createTestTask(){
-        await db.runAsync(
+        const taskResult = await db.runAsync(
             `
             INSERT INTO tasks (
                 title,
@@ -38,6 +38,23 @@ export default function TaskCreateScreen() {
             new Date().toISOString(),
         );
         console.log("Task created!");
+
+        const taskId = taskResult.lastInsertRowId;
+        await db.runAsync(
+            `
+            INSERT INTO subtasks(
+                task_id,
+                title,
+                completed,
+                position
+            )
+                VALUES (?, ?, ?, ?)
+            `,
+            taskId,
+            'Subtask TItle',
+            0,
+            0
+        );
     }
 
     async function handleCreateTask(db, task){

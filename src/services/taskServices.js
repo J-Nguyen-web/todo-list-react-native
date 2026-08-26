@@ -43,7 +43,34 @@ export async function getTasks(db) {
         SELECT *
         FROM tasks
         ORDER BY created_at DESC
-    `)
+    `);
 
-    return tasks;
+    const tasksWithSubtasks = await Promise.all(
+        tasks.map( async (task) => {
+
+            const subtasks = await db.getAllAsync(
+                `
+                SELECT *
+                FROM subtasks
+                WHERE task_id = ?
+                ORDER BY position ASC
+                `,
+                task.id
+            );
+
+            console.log(
+                "TASK ID:",
+                task.id,
+                "Subtask:",
+                subtasks
+            )
+
+            return {
+                ...task,
+                subtasks,
+            };
+        })
+    );
+
+    return tasksWithSubtasks;
 }
