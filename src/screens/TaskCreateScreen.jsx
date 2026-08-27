@@ -5,9 +5,14 @@ import { Dropdown } from "react-native-element-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { useState } from "react";
 import { useSQLiteContext } from "expo-sqlite";
+import { createTask } from "../services/taskServices.js";
 
 export default function TaskCreateScreen() {
 
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [subtasks, setSubtasks] = useState([]);
+    const [subtaskTitle, setSubtaskTitle] = useState('');
     const [category, setCategory] = useState('');
     const [date, setDate] = useState(new Date());
     const [time, setTime] = useState(new Date());
@@ -62,68 +67,79 @@ export default function TaskCreateScreen() {
             console.log('CREATE')
             const now = new Date().toISOString();
 
-            const result = await db.withExclusiveTransactionAsync(async (txn) => {
+            await createTask(db, {
+                title,
+                description,
 
-                const taskResult = await txn.runAsync(
-                    `
-                    INSERT INTO tasks (
-                        title,
-                        description,
-                        category_id
-                        completed,
-                        schedule_type,
-                        date,
-                        start_time,
-                        end_time,
-                        recurrence_type,
-                        recurrence_date,
-                        created_at,
-                        updated_at
-                    -- thats the row with the keys
-                    )
-                    VALUES (?, ?, ? ,? ,?, ?, ? ,? ,?, ? ,? ,?)
-                    -- question marks represents the properties (title, description, completed, created_at, updated_at)
+                categoryId: selectedCategory?.id || null,
+
+                scheduleType: "none",
+                reccurenceType: "none",
+                subtasks,
+            })
+
+            // const result = await db.withExclusiveTransactionAsync(async (txn) => {
+
+                // const taskResult = await txn.runAsync(
+                //     `
+                //     INSERT INTO tasks (
+                //         title,
+                //         description,
+                //         category_id
+                //         completed,
+                //         schedule_type,
+                //         date,
+                //         start_time,
+                //         end_time,
+                //         recurrence_type,
+                //         recurrence_date,
+                //         created_at,
+                //         updated_at
+                //     -- thats the row with the keys
+                //     )
+                //     VALUES (?, ?, ? ,? ,?, ?, ? ,? ,?, ? ,? ,?)
+                //     -- question marks represents the properties (title, description, completed, created_at, updated_at)
                     
-                    `,
-                    task.title,
-                    task.description || null,
-                    task.categoryId || null,
-                    0,
-                    task.scheduleType || "none",
-                    task.date || null,
-                    task.startTime || null,
-                    task.endTime || null,
-                    task.recurrenceType || "none",
-                    task.recurrenceData
-                        ? JSON.stringify(task.recurrenceData)
-                        : null,
-                    now,
-                    now
-                );
+                //     `,
+                //     task.title,
+                //     task.description || null,
+                //     task.categoryId || null,
+                //     0,
+                //     task.scheduleType || "none",
+                //     task.date || null,
+                //     task.startTime || null,
+                //     task.endTime || null,
+                //     task.recurrenceType || "none",
+                //     task.recurrenceData
+                //         ? JSON.stringify(task.recurrenceData)
+                //         : null,
+                //     now,
+                //     now
+                // );
                 
-                const taskId = taskResult.lastInsertRowId;
+                // const taskId = taskResult.lastInsertRowId;
 
-                for (let i = 0; i< task.subtask.length; i++) {
-                    const subtask = task.subtasks[i];
+                // for (let i = 0; i< task.subtask.length; i++) {
+                //     const subtask = task.subtasks[i];
 
-                    await txn.runAsync(
-                        `
-                        INSERT INTO subtasks (
-                            task_id,
-                            title,
-                            completed,
-                            position
-                        )
-                            VALUES (?, ?, ?, ?)
-                        `,
-                        taskId,
-                        subtask.title,
-                        0,
-                        i
-                    );
-                }
-                return taskId;
-            });
+                //     await txn.runAsync(
+                //         `
+                //         INSERT INTO subtasks (
+                //             task_id,
+                //             title,
+                //             completed,
+                //             position
+                //         )
+                //             VALUES (?, ?, ?, ?)
+                //         `,
+                //         taskId,
+                //         subtask.title,
+                //         0,
+                //         i
+                //     );
+                // }
+                // return taskId;
+            // });
 
             console.log("Created TASK ID: ",result)
             return result;
@@ -157,6 +173,8 @@ export default function TaskCreateScreen() {
                             textAlignVertical = 'top'
                             placeholder="Just do it..."
                             style={styles.textInput}
+                            velue={title}
+                            onChangeText={setTitle}
                         />                
                     </View>
 
@@ -167,6 +185,8 @@ export default function TaskCreateScreen() {
                             textAlignVertical = 'top'
                             placeholder="Write a note..."
                             style={styles.textInput}
+                            velue={description}
+                            onChangeText={setDescription}                            
                         />                
                     </View>                
                     <View style={styles.partition}>
