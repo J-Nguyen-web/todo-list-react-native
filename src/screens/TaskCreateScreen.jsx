@@ -1,5 +1,5 @@
 import { AntDesign, Feather, FontAwesome } from "@expo/vector-icons";
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Button } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Button, FlatList } from "react-native";
 import { globalColor } from "../globalStyles.js";
 import { Dropdown } from "react-native-element-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker"
@@ -148,6 +148,28 @@ export default function TaskCreateScreen() {
             console.error("CREATE TASK ERROR: ", error)
         }
     }
+    
+    function handleAddSubtasks(){
+        setSubtasks((currentSubtasks) => [
+            ...currentSubtasks,
+            {
+                id: Date.now().toString(),
+                title:"",
+            },
+        ])
+    }
+
+    function handleSubtaskChange(text, index){
+        setSubtasks((currentSubtasks) => {
+            const updateSubtasks = [... currentSubtasks];
+
+            updateSubtasks[index] = {
+                ...updateSubtasks[index],
+                title: text
+            }
+            return updateSubtasks;
+        })
+    }
 
     const categories = ['work', 'daily', 'study'];
 
@@ -191,12 +213,23 @@ export default function TaskCreateScreen() {
                     </View>                
                     <View style={styles.partition}>
                         <Text style={styles.subTitle}>Sub-tasks</Text>
-                        <TouchableOpacity style={styles.createNewElement}>
+                        <TouchableOpacity style={styles.createNewElement} onPress={handleAddSubtasks}>
                             <AntDesign name="plus" size={20} color={globalColor.orange} />
                             <Text style={styles.save}>
                                 Add Sub-task
                             </Text>
                         </TouchableOpacity>
+                        <FlatList 
+                            data={subtasks}
+                            keyExtractor={(item) => item.id}
+                            renderItem={({item, index}) =>(
+                                <TextInput
+                                    placeholder="describe your subtasks..."
+                                    value={item.title}
+                                    onChangeText={(text) => handleSubtaskChange(text, index)}
+                                />
+                            )}
+                        />
                     </View>
                     <View style={styles.partition}>
                         <Text style={styles.subTitle}>Category</Text>
