@@ -219,6 +219,7 @@ export default function TaskCreateScreen() {
                                 Add Sub-task
                             </Text>
                         </TouchableOpacity>
+                        {/* ScrollView will enlarge the screen so we dont need FlatList
                         <FlatList 
                             data={subtasks}
                             keyExtractor={(item) => item.id}
@@ -229,7 +230,15 @@ export default function TaskCreateScreen() {
                                     onChangeText={(text) => handleSubtaskChange(text, index)}
                                 />
                             )}
-                        />
+                        /> */}
+                        {subtasks.map((subtask, index) => (
+                            <TextInput 
+                                key={subtask.id}
+                                value={subtask.title}
+                                placeholder="describe your subtask..."
+                                onChangeText={(text) => handleAddSubtasks(text, index)}
+                            />
+                        ))}
                     </View>
                     <View style={styles.partition}>
                         <Text style={styles.subTitle}>Category</Text>
