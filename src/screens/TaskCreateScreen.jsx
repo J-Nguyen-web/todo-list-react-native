@@ -20,6 +20,11 @@ export default function TaskCreateScreen() {
     const [showTimeicker, setShowTimeicker] = useState(false);
 
     const db = useSQLiteContext();
+    const categories = [
+        {label: 'work', value: 'work'},
+        {label: 'daily', value: 'daily'},
+        {label: 'study', value: 'study'},
+        ];
     async function createTestTask(){
         const taskResult = await db.runAsync(
             `
@@ -62,7 +67,7 @@ export default function TaskCreateScreen() {
         );
     }
 
-    async function handleCreateTask(db, task){
+    async function handleCreateTask(){
         try {
             console.log('CREATE')
             const now = new Date().toISOString();
@@ -171,7 +176,6 @@ export default function TaskCreateScreen() {
         })
     }
 
-    const categories = ['work', 'daily', 'study'];
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
@@ -195,7 +199,7 @@ export default function TaskCreateScreen() {
                             textAlignVertical = 'top'
                             placeholder="Just do it..."
                             style={styles.textInput}
-                            velue={title}
+                            value={title}
                             onChangeText={setTitle}
                         />                
                     </View>
@@ -207,7 +211,7 @@ export default function TaskCreateScreen() {
                             textAlignVertical = 'top'
                             placeholder="Write a note..."
                             style={styles.textInput}
-                            velue={description}
+                            value={description}
                             onChangeText={setDescription}                            
                         />                
                     </View>                
@@ -235,8 +239,9 @@ export default function TaskCreateScreen() {
                             <TextInput 
                                 key={subtask.id}
                                 value={subtask.title}
+                                style={styles.textInput}
                                 placeholder="describe your subtask..."
-                                onChangeText={(text) => handleAddSubtasks(text, index)}
+                                onChangeText={(text) => handleSubtaskChange(text, index)}
                             />
                         ))}
                     </View>
@@ -317,7 +322,7 @@ export default function TaskCreateScreen() {
                 <View>
                     <Button
                         title="Create test task"
-                        onPress={createTestTask}
+                        onPress={handleCreateTask}
                     />
                 </View>
         </ScrollView>
