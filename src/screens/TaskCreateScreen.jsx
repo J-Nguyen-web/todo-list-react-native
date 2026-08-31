@@ -14,6 +14,7 @@ export default function TaskCreateScreen() {
     const [subtasks, setSubtasks] = useState([]);
     const [subtaskTitle, setSubtaskTitle] = useState('');
     const [category, setCategory] = useState('');
+    const [newCategory, setNewCategory] = useState('');
     const [date, setDate] = useState(new Date());
     const [time, setTime] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
@@ -21,9 +22,12 @@ export default function TaskCreateScreen() {
 
     const db = useSQLiteContext();
     const categories = [
-        {label: 'work', value: 'work'},
-        {label: 'daily', value: 'daily'},
-        {label: 'study', value: 'study'},
+        {label: 'Work', value: 'work'},
+        {label: 'Daily', value: 'daily'},
+        {label: 'Study', value: 'study'},
+        {label: 'Health', value: 'health'},
+        {label: 'Shopping', value: 'shopping'},
+        {label: 'Personel', value: 'personel'},
         ];
     async function createTestTask(){
         const taskResult = await db.runAsync(
@@ -176,6 +180,23 @@ export default function TaskCreateScreen() {
         })
     }
 
+    function handleNewCategory() {
+        setNewCategory((newCategoryEntry) => [
+            {
+                id: Date.now().toString(),
+                title: "",
+            }
+        ])
+    }
+
+    function handleNewCategoryChange(text) {
+        setNewCategory((newCategoryEntry) => [
+            {
+                title: text,
+            }
+        ])
+    }
+
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
@@ -247,28 +268,41 @@ export default function TaskCreateScreen() {
                     </View>
                     <View style={styles.partition}>
                         <Text style={styles.subTitle}>Category</Text>
-                        <Dropdown
-                            style={styles.dropdown}
-                            containerStyle={styles.dropdownMenu}
-                            itemContainerStyle={styles.dropdownItem}
-                            itemTextStyle={styles.dropdownItemText}
-                            placeholderStyle={styles.placeholder}
-                            selectedTextStyle={styles.selectedText}
-                            iconStyle={styles.icon}
-                            activeColor="#fff"
-                            data={categories}
-                            labelField='label'
-                            valueField='value'
-                            placeholder='Select Category'
-                            value={category}
-                            onChange={item => setCategory(item.value)}
-                        />
-                        <TouchableOpacity style={styles.createNewElement}>
-                            <AntDesign name="plus" size={20} color={globalColor.orange} />
-                            <Text style={styles.save}>
-                                Create New Category
-                            </Text>
-                        </TouchableOpacity>
+                        {!newCategory &&(                        
+                            <Dropdown
+                                style={styles.dropdown}
+                                containerStyle={styles.dropdownMenu}
+                                itemContainerStyle={styles.dropdownItem}
+                                itemTextStyle={styles.dropdownItemText}
+                                placeholderStyle={styles.placeholder}
+                                selectedTextStyle={styles.selectedText}
+                                iconStyle={styles.icon}
+                                activeColor="#fff"
+                                data={categories}
+                                labelField='label'
+                                valueField='value'
+                                placeholder='Select Category'
+                                value={category}
+                                onChange={item => setCategory(item.value)}
+                            />
+                        )}
+                        {!newCategory &&(
+                            <TouchableOpacity style={styles.createNewElement} onPress={handleNewCategory}>
+                                <AntDesign name="plus" size={20} color={globalColor.orange} />
+                                <Text style={styles.save}>
+                                    Create New Category
+                                </Text>
+                            </TouchableOpacity>
+                        )}
+                        {newCategory &&(
+                            <TextInput 
+                                style={styles.textInput}
+                                placeholder="New category name..."
+                                key={newCategory.id}
+                                value={newCategory.title}
+                                onChangeText={(text) => handleNewCategoryChange(text)}
+                            />
+                        )}
                     </View>
                     {/* todo determinated the platform and use forAndroid pick */}
                     <View style={styles.dateTimeContainer}>
