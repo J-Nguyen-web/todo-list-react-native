@@ -13,14 +13,31 @@ export default function TaskCreateScreen() {
     const [description, setDescription] = useState('');
     const [subtasks, setSubtasks] = useState([]);
     const [subtaskTitle, setSubtaskTitle] = useState('');
-    const [category, setCategory] = useState('');
+    const [category, setCategory] = useState([]);
     const [newCategory, setNewCategory] = useState('');
+    const [categoryError, setCategoryError] = useState('')
     const [date, setDate] = useState(new Date());
     const [time, setTime] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimeicker, setShowTimeicker] = useState(false);
 
     const db = useSQLiteContext();
+
+    async function loadCategories() {
+        const categories = await db.getAllAsync(
+            `
+            SELECT * FROM categories
+            ORDER BY name ASC
+            `
+        )
+        setCategory(categories)
+    }
+
+    const dropdownCategories = categories.map((item) => ({
+        label: item.name,
+        value: item.id
+    }))
+
     const categories = [
         {label: 'Work', value: 'work'},
         {label: 'Daily', value: 'daily'},
@@ -75,17 +92,24 @@ export default function TaskCreateScreen() {
         try {
             console.log('CREATE')
             const now = new Date().toISOString();
+            setCategoryError("");
+
+            if(newCategory) {
+                `
+                INSERT INTO categories
+                `
+            }
 
             await createTask(db, {
                 title,
                 description,
 
-                categoryId: selectedCategory?.id || null,
+                categoryId: selectedCategory?.id || newCategory,
 
                 scheduleType: "none",
                 reccurenceType: "none",
                 subtasks,
-            })
+            });
 
             // const result = await db.withExclusiveTransactionAsync(async (txn) => {
 
@@ -155,6 +179,9 @@ export default function TaskCreateScreen() {
 
         } catch (error) {
             console.error("CREATE TASK ERROR: ", error)
+            if (error.message.incudes("UNIQUE constrain failed")) {
+                setCategoryError('Category already exist!')
+            }
         }
     }
     
