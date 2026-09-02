@@ -2,10 +2,10 @@ import { AntDesign, Feather, FontAwesome } from "@expo/vector-icons";
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Button, FlatList } from "react-native";
 import { globalColor } from "../globalStyles.js";
 import { Dropdown } from "react-native-element-dropdown";
-import DateTimePicker from "@react-native-community/datetimepicker"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSQLiteContext } from "expo-sqlite";
 import { createTask } from "../services/taskServices.js";
+import DateTimePicker from "@react-native-community/datetimepicker"
 
 export default function TaskCreateScreen() {
 
@@ -22,6 +22,10 @@ export default function TaskCreateScreen() {
     const [showTimeicker, setShowTimeicker] = useState(false);
 
     const db = useSQLiteContext();
+
+    useEffect(() => {
+        loadCategories();
+    },[])
 
     async function loadCategories() {
         const categories = await db.getAllAsync(
@@ -93,6 +97,20 @@ export default function TaskCreateScreen() {
             console.log('CREATE')
             const now = new Date().toISOString();
             setCategoryError("");
+            
+            const existingCategory = categories.find(
+                (category) => 
+                    category.name.toLowerCase() === newCategory.trim().toLowerCase()
+            )
+
+            if(existingCategory) {
+                setCategoryError(
+                    `"${existingCategory.name}" already exist. Please select it from the list.`
+                )
+
+                setNewCategory = null;
+                return
+            }
 
             if(newCategory) {
                 `
@@ -295,6 +313,11 @@ export default function TaskCreateScreen() {
                     </View>
                     <View style={styles.partition}>
                         <Text style={styles.subTitle}>Category</Text>
+                        { categoryError&& (
+                            <Text style={styles.errorText}>
+                                {categoryError}
+                            </Text>
+                        )}
                         {!newCategory &&(                        
                             <Dropdown
                                 style={styles.dropdown}
@@ -562,5 +585,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
 
+    },
+    errorText: {
+        color: 'red'
     }
 })
