@@ -96,36 +96,46 @@ export default function TaskCreateScreen() {
         try {
             console.log('CREATE')
             const now = new Date().toISOString();
+            let categoryId = category;
             setCategoryError("");
             
-            const existingCategory = categories.find(
-                (category) => 
-                    category.name.toLowerCase() === newCategory.trim().toLowerCase()
-            )
-
-            if(existingCategory) {
-                setCategoryError(
-                    `"${existingCategory.name}" already exist. Please select it from the list.`
+            if(newCategory !== null) {
+                const existingCategory = categories.find(
+                    (categoryItem) => categoryItem.name.toLowerCase() === newCategory.trim().toLowerCase()
                 )
 
-                setNewCategory = null;
-                return
-            }
+                if(existingCategory) {
+                    setCategoryError(
+                        `"${existingCategory.name}" already exist. Please select it from the list.`
+                    )
 
-            if(newCategory) {
-                `
-                INSERT INTO categories
-                `
+                    setNewCategory = null;
+                    return
+                }
+                
+                const result = await db.runAsync(
+                    `
+                    INSERT INTO categories (
+                        name,
+                        created_at
+                    )
+                    VALUE (?, ?)
+                    `,
+                    newCategory,
+                    new Date().toISOString()                    
+                );
+                categoryId = result.lastInserRowId;
+
             }
 
             await createTask(db, {
                 title,
                 description,
 
-                categoryId: selectedCategory?.id || newCategory,
+                categoryId,
 
                 scheduleType: "none",
-                reccurenceType: "none",
+                recurenceType: "none",
                 subtasks,
             });
 

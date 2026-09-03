@@ -7,11 +7,21 @@ export async function migrateDbIfNeeded(db) {
 
         CREATE TABLE IF NOT EXISTS categories (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
+            name TEXT NOT NULL COLLATE NOCASE UNIQUE,
             icon TEXT,
             color TEXT,
             created_at TEXT NOT NULL    
         );
+        
+        -- ще създаде категориите при инициализация
+        INSER INTO categories (name, Icon, icon, size, color, background, created_at)
+        VALUES
+            ('Work', SimpleLineIcons, 'briefcase', 25,'#3338ca','#d8e0f8',dateTime('now)),
+            ('Shopping', MaterialCommunityIcons, 'cart-variant', 33,'#16803D','#dcfce7',dateTime('now)),
+            ('Health', MaterialCommunityIcons, 'heart-pulse', 31,'#df2323','#fcdcdc',dateTime('now)),
+            ('Study', MaterialCommunityIcons, 'book-open-page-variant-outline', 28,'#e9751c','#ffe3bc',dateTime('now)),
+            ('Daily', MaterialCommunityIcons, 'sun-clock-outline', 28,'#00e0e0','#c3ffff',dateTime('now)),
+            ('Personal', MaterialCommunityIcons, 'account', 25,'#a548ec','#eee6ff',dateTime('now)),
 
         CREATE TABLE IF NOT EXISTS tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

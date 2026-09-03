@@ -9,7 +9,7 @@ export const CATEGORY_CONFIG = {
         background: '#d8e0f8',
     },
     Shopping: {
-        Icon:   MaterialCommunityIcons,
+        Icon: MaterialCommunityIcons,
         icon: 'cart-variant',
         size: 33,
         color: '#16803D',
