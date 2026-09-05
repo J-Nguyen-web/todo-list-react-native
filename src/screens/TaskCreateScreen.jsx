@@ -14,6 +14,7 @@ export default function TaskCreateScreen() {
     const [subtasks, setSubtasks] = useState([]);
     const [subtaskTitle, setSubtaskTitle] = useState('');
     const [category, setCategory] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [newCategory, setNewCategory] = useState('');
     const [categoryError, setCategoryError] = useState('')
     const [date, setDate] = useState(new Date());
@@ -25,31 +26,35 @@ export default function TaskCreateScreen() {
 
     useEffect(() => {
         loadCategories();
+        console.log(categories)
+
     },[])
 
     async function loadCategories() {
-        const categories = await db.getAllAsync(
+        const loadedCategories = await db.getAllAsync(
             `
             SELECT * FROM categories
             ORDER BY name ASC
             `
         )
-        setCategory(categories)
+        console.log(loadCategories)
+        setCategories(loadedCategories)
     }
 
+        console.log(categories)
     const dropdownCategories = categories.map((item) => ({
         label: item.name,
         value: item.id
     }))
 
-    const categories = [
-        {label: 'Work', value: 'work'},
-        {label: 'Daily', value: 'daily'},
-        {label: 'Study', value: 'study'},
-        {label: 'Health', value: 'health'},
-        {label: 'Shopping', value: 'shopping'},
-        {label: 'Personel', value: 'personel'},
-        ];
+    // const categories = [
+    //     {label: 'Work', value: 'work'},
+    //     {label: 'Daily', value: 'daily'},
+    //     {label: 'Study', value: 'study'},
+    //     {label: 'Health', value: 'health'},
+    //     {label: 'Shopping', value: 'shopping'},
+    //     {label: 'Personel', value: 'personel'},
+    //     ];
     async function createTestTask(){
         const taskResult = await db.runAsync(
             `

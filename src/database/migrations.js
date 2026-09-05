@@ -1,10 +1,13 @@
+import * as SQLite from "expo-sqlite";
+
 export async function migrateDbIfNeeded(db) {
+    await SQLite.deleteDatabaseAsync("todo.db")
     await db.execAsync(`
         PRAGMA journal_mode = WAL;
 
         PRAGMA foreign_keys = ON;
         -- key = value, for easier relationships
-
+        
         CREATE TABLE IF NOT EXISTS categories (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL COLLATE NOCASE UNIQUE,
@@ -20,11 +23,11 @@ export async function migrateDbIfNeeded(db) {
         INSERT INTO categories (name, icon, color, background, created_at)
         VALUES
             ('Work', '💼', '#3338ca', '#d8e0f8', dateTime('now')),
-            ('Shopping, '🛒', '#16803D','#dcfce7', dateTime('now')),
-            ('Health, '💗', '#df2323','#fcdcdc', dateTime('now')),
-            ('Study, '📖', '#e9751c','#ffe3bc', dateTime('now')),
-            ('Daily, '🔆', '#00e0e0', '#c3ffff', dateTime('now')),
-            ('Personal, '👤', '#a548ec', '#eee6ff', dateTime('now')),
+            ('Shopping', '🛒', '#16803D','#dcfce7', dateTime('now')),
+            ('Health', '💗', '#df2323','#fcdcdc', dateTime('now')),
+            ('Study', '📖', '#e9751c','#ffe3bc', dateTime('now')),
+            ('Daily', '🔆', '#00e0e0', '#c3ffff', dateTime('now')),
+            ('Personal', '👤', '#a548ec', '#eee6ff', dateTime('now'));
 
         --INSERT INTO categories (name, Icon, icon, size, color, background, created_at)
         --VALUES
