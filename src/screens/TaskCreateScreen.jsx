@@ -37,7 +37,6 @@ export default function TaskCreateScreen() {
             ORDER BY name ASC
             `
         )
-        console.log(loadCategories)
         setCategories(loadedCategories)
     }
 
@@ -46,6 +45,7 @@ export default function TaskCreateScreen() {
         label: item.name,
         value: item.id
     }))
+    console.log(dropdownCategories)
 
     // const categories = [
     //     {label: 'Work', value: 'work'},
@@ -96,7 +96,6 @@ export default function TaskCreateScreen() {
             0
         );
     }
-
     async function handleCreateTask(){
         try {
             console.log('CREATE')
@@ -114,23 +113,23 @@ export default function TaskCreateScreen() {
                         `"${existingCategory.name}" already exist. Please select it from the list.`
                     )
 
-                    setNewCategory = null;
+                    setNewCategory(null);
                     return
                 }
-                
+                console.log("categoryId:", categoryId);
                 const result = await db.runAsync(
                     `
                     INSERT INTO categories (
                         name,
                         created_at
                     )
-                    VALUE (?, ?)
+                    VALUES (?, ?)
                     `,
                     newCategory,
                     new Date().toISOString()                    
                 );
-                categoryId = result.lastInserRowId;
-
+                categoryId = result.lastInsertRowId;
+                console.log("Created TASK ID: ",result)
             }
 
             await createTask(db, {
@@ -140,7 +139,7 @@ export default function TaskCreateScreen() {
                 categoryId,
 
                 scheduleType: "none",
-                recurenceType: "none",
+                recurrenceType: "none",
                 subtasks,
             });
 
@@ -207,9 +206,6 @@ export default function TaskCreateScreen() {
                 // return taskId;
             // });
 
-            console.log("Created TASK ID: ",result)
-            return result;
-
         } catch (error) {
             console.error("CREATE TASK ERROR: ", error)
             if (error.message.incudes("UNIQUE constrain failed")) {
@@ -239,7 +235,7 @@ export default function TaskCreateScreen() {
             return updateSubtasks;
         })
     }
-
+// todo not empty category name
     function handleNewCategory() {
         setNewCategory((newCategoryEntry) => [
             {
@@ -343,7 +339,7 @@ export default function TaskCreateScreen() {
                                 selectedTextStyle={styles.selectedText}
                                 iconStyle={styles.icon}
                                 activeColor="#fff"
-                                data={categories}
+                                data={dropdownCategories}
                                 labelField='label'
                                 valueField='value'
                                 placeholder='Select Category'
