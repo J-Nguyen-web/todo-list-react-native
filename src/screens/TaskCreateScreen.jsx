@@ -214,7 +214,7 @@ export default function TaskCreateScreen() {
                         <AntDesign name="close" size={25} color='black' />
                     </View>
                     <Text style={styles.title}>Create Task</Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={handleCreateTask}>
                         <Text style={styles.save}>
                             Save
                         </Text>
@@ -367,10 +367,11 @@ export default function TaskCreateScreen() {
                     </Text>
                 </TouchableOpacity> */}
                 <View>
-                    <Button
-                        title="Create test task"
-                        onPress={handleCreateTask}
-                    />
+                    <TouchableOpacity style={styles.createButton} onPress={handleCreateTask}>
+                        <Text style={{fontSize: 22}}>
+                            Create test task
+                        </Text>
+                    </TouchableOpacity>
                 </View>
         </ScrollView>
     );    
@@ -519,6 +520,15 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '700',
         color: globalColor.orange
+    },
+
+    createButton: {
+        backgroundColor: globalColor.orange,
+        borderRadius: 26,
+        padding: 8,
+        paddingHorizontal: 14,
+        textAlign: 'center',
+        alignSelf: 'center',
     },
 
     createContainer:{
