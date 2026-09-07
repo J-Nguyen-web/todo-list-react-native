@@ -5,6 +5,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import { useEffect, useState } from "react";
 import { useSQLiteContext } from "expo-sqlite";
 import { createTask } from "../services/taskServices.js";
+import { useNavigation } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker"
 
 export default function TaskCreateScreen() {
@@ -23,11 +24,10 @@ export default function TaskCreateScreen() {
     const [showTimeicker, setShowTimeicker] = useState(false);
 
     const db = useSQLiteContext();
+    const navigation = useNavigation();
 
     useEffect(() => {
         loadCategories();
-        console.log(categories)
-
     },[])
 
     async function loadCategories() {
@@ -47,58 +47,8 @@ export default function TaskCreateScreen() {
     }))
     console.log(dropdownCategories)
 
-    // const categories = [
-    //     {label: 'Work', value: 'work'},
-    //     {label: 'Daily', value: 'daily'},
-    //     {label: 'Study', value: 'study'},
-    //     {label: 'Health', value: 'health'},
-    //     {label: 'Shopping', value: 'shopping'},
-    //     {label: 'Personel', value: 'personel'},
-    //     ];
-    async function createTestTask(){
-        const taskResult = await db.runAsync(
-            `
-            INSERT INTO tasks (
-                title,
-                description,
-                completed,
-                created_at,
-                updated_at
-            -- thats the row with the keys
-            )
-            VALUES (?, ?, ? ,? ,?)
-            -- question marks represents the properties (title, description, completed, created_at, updated_at)
-            
-            `,
-        // thats the example of given values
-            "Buy milk",
-            "Buy milk from the supermarket",
-            0,
-            new Date().toISOString(),
-            new Date().toISOString(),
-        );
-        console.log("Task created!");
-
-        const taskId = taskResult.lastInsertRowId;
-        await db.runAsync(
-            `
-            INSERT INTO subtasks(
-                task_id,
-                title,
-                completed,
-                position
-            )
-                VALUES (?, ?, ?, ?)
-            `,
-            taskId,
-            'Subtask TItle',
-            0,
-            0
-        );
-    }
     async function handleCreateTask(){
         try {
-            console.log('CREATE')
             const now = new Date().toISOString();
             let categoryId = category;
             setCategoryError("");
@@ -116,7 +66,6 @@ export default function TaskCreateScreen() {
                     setNewCategory(null);
                     return
                 }
-                console.log("categoryId:", categoryId);
                 const result = await db.runAsync(
                     `
                     INSERT INTO categories (
@@ -142,8 +91,6 @@ export default function TaskCreateScreen() {
                 recurrenceType: "none",
                 subtasks,
             });
-
-            // const result = await db.withExclusiveTransactionAsync(async (txn) => {
 
                 // const taskResult = await txn.runAsync(
                 //     `
@@ -205,7 +152,12 @@ export default function TaskCreateScreen() {
                 // }
                 // return taskId;
             // });
-
+            navigation.navigate("AllTasks");
+            setTitle("");
+            setDescription("");
+            setCategory(null);
+            setNewCategory(null);
+            setSubtasks([]);
         } catch (error) {
             console.error("CREATE TASK ERROR: ", error)
             if (error.message.incudes("UNIQUE constrain failed")) {

@@ -53,7 +53,7 @@ export default function TabNavigator() {
                 ),                
             }}/>
             
-            <Tabs.Screen name="SettingNavigator" component={AllTaskScreen} options={{
+            <Tabs.Screen name="AllTasks" component={AllTaskScreen} options={{
                 headerShown: false,
                 title: "All Tasks",
                 headerTitleAlign: 'center',
