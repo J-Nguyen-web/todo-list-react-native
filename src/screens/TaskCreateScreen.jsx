@@ -16,7 +16,7 @@ export default function TaskCreateScreen() {
     const [subtaskTitle, setSubtaskTitle] = useState('');
     const [category, setCategory] = useState([]);
     const [categories, setCategories] = useState([]);
-    const [newCategory, setNewCategory] = useState('');
+    const [newCategory, setNewCategory] = useState(null);
     const [categoryError, setCategoryError] = useState('')
     const [date, setDate] = useState(new Date());
     const [time, setTime] = useState(new Date());
@@ -54,6 +54,12 @@ export default function TaskCreateScreen() {
             setCategoryError("");
             
             if(newCategory !== null) {
+                if(newCategory.trim() === ""){
+                    setCategoryError('Category title must contain at least one character');
+                    return
+                } else {
+                    setCategoryError('')
+                }
                 const existingCategory = categories.find(
                     (categoryItem) => categoryItem.name.toLowerCase() === newCategory.trim().toLowerCase()
                 )
@@ -189,20 +195,17 @@ export default function TaskCreateScreen() {
     }
 // todo not empty category name
     function handleNewCategory() {
-        setNewCategory((newCategoryEntry) => [
-            {
-                id: Date.now().toString(),
-                title: "",
-            }
-        ])
+        setNewCategory('')
     }
 
     function handleNewCategoryChange(text) {
-        setNewCategory((newCategoryEntry) => [
-            {
-                title: text,
-            }
-        ])
+        setNewCategory(text)
+        
+        if (text.trim() === '') { // .trim() prevents ("     ") to be valid
+            setCategoryError('Category title must contain at least one character')
+        } else {
+            setCategoryError("");
+        }
     }
 
 
@@ -307,13 +310,14 @@ export default function TaskCreateScreen() {
                                 </Text>
                             </TouchableOpacity>
                         )}
-                        {newCategory &&(
+                        {newCategory !== null &&(
                             <TextInput 
                                 style={styles.textInput}
                                 placeholder="New category name..."
                                 key={newCategory.id}
-                                value={newCategory.title}
+                                value={newCategory}
                                 onChangeText={(text) => handleNewCategoryChange(text)}
+                                // onChangeText={handleNewCategoryChange} // it the same just short version
                             />
                         )}
                     </View>
