@@ -58,13 +58,6 @@ export async function getTasks(db) {
                 task.id
             );
 
-            console.log(
-                "TASK ID:",
-                task.id,
-                "Subtask:",
-                subtasks
-            )
-
             return {
                 ...task,
                 subtasks,

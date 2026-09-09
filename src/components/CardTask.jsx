@@ -1,44 +1,46 @@
 import { Entypo, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet, View, Text } from "react-native";
 import { CATEGORY_CONFIG } from "../constants/categories.js";
+import { useEffect, useState } from "react";
+import { useSQLiteContext } from "expo-sqlite";
 
-export default function CardTask({
-    title,
-    category,
-    description,
-    completed,
-    time
-}) {
+export default function CardTask({task, categories}) {
+    console.log('before return')
+    if (!task || !categories) return null
 
-    const categoryType = CATEGORY_CONFIG[category] ?? CATEGORY_CONFIG.personal
+    console.log('TASK.......', task)
+    console.log(categories)
+    const category = categories.find( item => item.id === task.category_id )
+    console.log(category)
 
-    const Icon = categoryType.Icon
+    // const categoryType = CATEGORY_CONFIG[category_id]
+    // const Icon = categoryType.Icon
 
     return (    
-        <View style={[styles.cardContainer, {
-        borderLeftColor: categoryType.color}]}>
+        <View style={[styles.cardContainer, { borderLeftColor: category.color}]}>
 
             <View style={styles.leftPart}>
                 <Ionicons
-                    name={completed ? "checkmark-circle" : "ellipse-outline"}
+                    name={task.completed ? "checkmark-circle" : "ellipse-outline"}
                     size={28}
-                    color={completed ? "#50a353" : "#999"}
+                    color={task.completed ? "#50a353" : "#999"}
                 />
                 <View style={styles.icon}>
-                    <Icon
+                    {/* <Icon
                         name={categoryType.icon}
                         size={categoryType.size}
                         color={categoryType.color}
-                    />                    
+                    />                     */}
+                    <Text>{category.icon}</Text>
                 </View>
 
                 <View style={styles.titleContainer}>
-                    <Text style={{flexWrap: 'wrap'}}>{title}</Text>
-                    <Text style={{ color: categoryType.color}}>{category}</Text>
+                    <Text style={{flexWrap: 'wrap'}}>{task.title}</Text>
+                    <Text style={{ color: category.color}}>{category.title}</Text>
                 </View>
             </View>
             <View style={styles.rightPart}>
-                <Text>{time}</Text>
+                <Text>time</Text>
                 <Entypo name="chevron-small-down" size={25} color='gray' />
                 <MaterialIcons name="drag-indicator" size={25} color='gray' />
             </View>

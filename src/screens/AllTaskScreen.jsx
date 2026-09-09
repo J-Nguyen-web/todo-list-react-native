@@ -10,18 +10,19 @@ import CardCategory from "../components/CardCategory.jsx";
 import { getTasks } from "../services/taskServices.js";
 import { useSQLiteContext } from "expo-sqlite";
 
-// const categories = ['work', 'health'];
-
 export default function AllTaskScreen() {
 
     const categoryList = useRef(null);
-    const [categories, setCategories] = useState();
+    const [tasks, setTasks] = useState();
+    const [categories, setCategories] = useState([]);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
     // const categoryType = CATEGORY_CONFIG[]
 
     useEffect(() => {
-        setCategories(categoriesGroup(tasks))
+        // setCategories(categoriesGroup(tasks))
+        loadCategories()
+        handleGetTasks();
     },[])    
 
     const handleFavScroll = (event) => {
@@ -35,12 +36,21 @@ export default function AllTaskScreen() {
     }    
     
     const db = useSQLiteContext();
-    async function handleGetTasks() {
-        console.log('inside')
-        const tasks = await getTasks(db)
 
-        console.log(tasks)
+    async function handleGetTasks() {
+        const tasks = await getTasks(db)
+        setTasks(tasks)
     }
+
+    async function loadCategories() {
+        const loadedCategories = await db.getAllAsync(
+            `
+            SELECT * FROM categories
+            ORDER BY name ASC
+            `
+        )
+        setCategories(loadedCategories)
+    }       
     
     return (
         <View style={styles.container}>
@@ -58,7 +68,7 @@ export default function AllTaskScreen() {
                 </View>
             </View>
 
-            <View style={styles.allCategories}>
+            {/* <View style={styles.allCategories}>
                 <FlatList
                     ref={categoryList}
                     contentContainerStyle={styles.categoryList}
@@ -131,14 +141,16 @@ export default function AllTaskScreen() {
                         </TouchableOpacity>
                     </View>
                 )}                
-            </View>
+            </View> */}
 
             <View style={styles.taskContainer}>
+                <Text>
+                    ALL
+                </Text>
                 <FlatList
-                            data={tasks}
-                            renderItem={({ item }) => <CardTask {...item} />}
-                            keyExtractor={(item) => item.id}
-                        
+                    data={tasks}
+                    renderItem={({ item }) => (<CardTask task={item} categories={categories} />)}
+                    keyExtractor={(item) => item.id.toString()}
                 />                
             </View>
             <Button 

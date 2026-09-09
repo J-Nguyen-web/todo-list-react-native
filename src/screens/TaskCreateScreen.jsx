@@ -40,12 +40,10 @@ export default function TaskCreateScreen() {
         setCategories(loadedCategories)
     }
 
-        console.log(categories)
     const dropdownCategories = categories.map((item) => ({
         label: item.name,
         value: item.id
     }))
-    console.log(dropdownCategories)
 
     async function handleCreateTask(){
         try {
@@ -84,7 +82,6 @@ export default function TaskCreateScreen() {
                     new Date().toISOString()                    
                 );
                 categoryId = result.lastInsertRowId;
-                console.log("Created TASK ID: ",result)
             }
 
             await createTask(db, {
