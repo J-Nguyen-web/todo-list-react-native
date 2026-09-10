@@ -9,6 +9,9 @@ import { useEffect, useRef, useState } from "react";
 import categoriesGroup from "../util/categoriesGroup.js";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import CardCategory from "../components/CardCategory.jsx";
+import { useSQLiteContext } from "expo-sqlite";
+import { getTasks } from "../services/taskServices.js";
+import getCategories from "../services/categoryService.js";
 
 const greeting = 'Good Morning' // todo changable depending on the hours of the day
 const username = 'Nguyen' // todo changable depending on the user.username
@@ -24,8 +27,16 @@ export default function HomeNavigator() {
     
     const favListRef = useRef(null);
     const [favCategories, setFavCategories] = useState();
+    const [tasks, setTasks] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
+
+    const db = useSQLiteContext();
+
+    useEffect(() => {
+        setFavCategories(categoriesGroup(tasks))
+    },[])
 
     const handleFavScroll = (event) => {
         const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
@@ -37,9 +48,15 @@ export default function HomeNavigator() {
         setCanScrollRight(maxOffset > 5 && offsetX < maxOffset - 5);
     }
 
-    useEffect(() => {
-        setFavCategories(categoriesGroup(tasks))
-    },[])
+    async function loadTasks() {
+        const loadedTasks = await getTasks(db);
+        setTasks(loadedTasks);
+    }
+
+    async function loadCategories() {
+        const loadedCategories = await getCategories(db);
+        setCategories(loadCategories);
+    }
 
     return (
         <SafeAreaView 

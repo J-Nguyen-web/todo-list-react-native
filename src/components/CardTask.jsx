@@ -9,15 +9,15 @@ export default function CardTask({task, categories}) {
     if (!task || !categories) return null
 
     console.log('TASK.......', task)
-    console.log(categories)
-    const category = categories.find( item => item.id === task.category_id )
-    console.log(category)
+    console.log('CATEGORIES:....   ' ,categories)
+    const category = categories.find( item => Number(item.id) === Number(task.category_id) )
+    console.log('CATEGORY...',category)
 
     // const categoryType = CATEGORY_CONFIG[category_id]
     // const Icon = categoryType.Icon
 
     return (    
-        <View style={[styles.cardContainer, { borderLeftColor: category.color}]}>
+        <View style={[styles.cardContainer, { borderLeftColor: category?.color}]}>
 
             <View style={styles.leftPart}>
                 <Ionicons
@@ -31,12 +31,12 @@ export default function CardTask({task, categories}) {
                         size={categoryType.size}
                         color={categoryType.color}
                     />                     */}
-                    <Text>{category.icon}</Text>
+                    <Text>{category?.icon}</Text>
                 </View>
 
                 <View style={styles.titleContainer}>
                     <Text style={{flexWrap: 'wrap'}}>{task.title}</Text>
-                    <Text style={{ color: category.color}}>{category.title}</Text>
+                    <Text style={{ color: category?.color}}>{category?.title}</Text>
                 </View>
             </View>
             <View style={styles.rightPart}>
