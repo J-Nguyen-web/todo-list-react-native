@@ -36,6 +36,8 @@ export default function HomeNavigator() {
 
     useEffect(() => {
         setFavCategories(categoriesGroup(tasks))
+        loadTasks()
+        loadCategories()
     },[])
 
     const handleFavScroll = (event) => {
@@ -55,7 +57,7 @@ export default function HomeNavigator() {
 
     async function loadCategories() {
         const loadedCategories = await getCategories(db);
-        setCategories(loadCategories);
+        setCategories(loadedCategories);
     }
 
     return (
@@ -176,7 +178,7 @@ export default function HomeNavigator() {
 
                         <FlatList style={{flex: 1, gap: 6, backgroundColor: '#fff'}}
                             data={tasks}
-                            renderItem={({ item }) => <CardTask {...item} />}
+                            renderItem={({ item }) => <CardTask task={item} categories={categories} />}
                             keyExtractor={(item) => item.id}
                         />
                     </View>

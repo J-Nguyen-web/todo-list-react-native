@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import RootNavigator from './src/navigators/RootNavigator.jsx';
+import { CategoryProvider } from './src/context/CategoryContext.js';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { enableScreens } from 'react-native-screens';
 import { NavigationContainer } from '@react-navigation/native';
@@ -16,12 +17,14 @@ export default function App() {
         // actual database persist file
         onInit={migrateDbIfNeeded}
     >
-        <SafeAreaProvider>
-            <NavigationContainer>
-                <StatusBar style='auto'/>
-                        <RootNavigator />
-            </NavigationContainer>
-        </SafeAreaProvider>        
+        <CategoryProvider>
+            <SafeAreaProvider>
+                <NavigationContainer>
+                    <StatusBar style='auto'/>
+                            <RootNavigator />
+                </NavigationContainer>
+            </SafeAreaProvider>
+        </CategoryProvider>        
     </SQLiteProvider>
 
 

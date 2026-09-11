@@ -13,7 +13,7 @@ import { useSQLiteContext } from "expo-sqlite";
 export default function AllTaskScreen() {
 
     const categoryList = useRef(null);
-    const [tasks, setTasks] = useState();
+    const [tasks, setTasks] = useState([]);
     const [categories, setCategories] = useState([]);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
