@@ -67,3 +67,9 @@ export async function getTasks(db) {
 
     return tasksWithSubtasks;
 }
+
+export async function deleteTask(db, id) {
+    return await db.runAsync (
+        "DELETE FROM tasks" WHERE id = ?
+    )
+}

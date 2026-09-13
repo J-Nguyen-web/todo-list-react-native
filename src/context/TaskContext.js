@@ -18,12 +18,22 @@ export function TaskProvider({ children }) {
         setTasks(loaded)
     }
 
+    async function createTask(task) {
+        await createTask(db, task);
+        await loadTasks();
+        }
+    }
+
+    async function removeTask(id) {
+        async function deleteTask(id, id)
+    }
+
     return (
-        <TaskContext.Provider  value = {{tasks, setTasks}}>
+        <TaskContext.Provider  value = {{tasks, setTasks, removeTask}}>
             { children }
         </TaskContext.Provider>
     )
 }
-    export function useTasks(){
+    export function useTasks(task, ){
         return useContext(TaskContext)
     }
