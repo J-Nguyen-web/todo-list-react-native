@@ -1,4 +1,4 @@
-export async function createTask(db, task) {
+export async function createTaskService(db, task) {
     const now = new Date().toISOString();
 
     const result = await db.runAsync(
@@ -40,8 +40,7 @@ export async function createTask(db, task) {
 
 export async function getTasks(db) {
     const tasks = await db.getAllAsync(`
-        SELECT *
-        FROM tasks
+        SELECT * FROM tasks
         ORDER BY created_at DESC
     `);
 
@@ -50,8 +49,7 @@ export async function getTasks(db) {
 
             const subtasks = await db.getAllAsync(
                 `
-                SELECT *
-                FROM subtasks
+                SELECT * FROM subtasks
                 WHERE task_id = ?
                 ORDER BY position ASC
                 `,
@@ -68,8 +66,27 @@ export async function getTasks(db) {
     return tasksWithSubtasks;
 }
 
+export async function updateTaskService(db, task, id) {
+    await db.runAsync(
+        `UPDATE tasks
+        SET title = ?,
+            description = ?,
+            category_id = ?,
+            updated_at = ?,
+
+        WHERE id = ?`,
+        task.title,
+        task.description,
+        task.category_id,
+        new Date().toISOString(),
+        id
+        
+    )
+}
+
 export async function deleteTask(db, id) {
     return await db.runAsync (
-        "DELETE FROM tasks" WHERE id = ?
+        "DELETE FROM tasks WHERE id = ?",
+        id
     )
 }

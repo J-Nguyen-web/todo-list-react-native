@@ -1,10 +1,11 @@
 import { useSQLiteContext } from "expo-sqlite";
 import { createContext, useContext, useEffect, useState } from "react";
+import { deleteTask } from "../services/taskServices.js";
 
 const TaskContext = createContext();
 
 export function TaskProvider({ children }) {
-    const db = useSQLiteContext();
+    const db = useSQLiteContext(); // react hook - must be called from component not ordinary services, thats why its here not in service
     const [tasks, setTasks] = useState([]);
 
     useEffect(() => {
@@ -19,17 +20,22 @@ export function TaskProvider({ children }) {
     }
 
     async function createTask(task) {
-        await createTask(db, task);
+        await createTaskServic(db, task);
         await loadTasks();
-        }
+    }
+    
+    async function updateTask(db, task, id) {
+        await updateTaskService(db, id)
+        await loadTasks();
     }
 
     async function removeTask(id) {
-        async function deleteTask(id, id)
+        await deleteTask(db, id)
+        await loadTasks();
     }
 
     return (
-        <TaskContext.Provider  value = {{tasks, setTasks, removeTask}}>
+        <TaskContext.Provider  value = {{tasks, createTask, removeTask}}>
             { children }
         </TaskContext.Provider>
     )
