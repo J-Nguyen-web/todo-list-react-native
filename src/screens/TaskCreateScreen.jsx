@@ -4,9 +4,12 @@ import { globalColor } from "../globalStyles.js";
 import { Dropdown } from "react-native-element-dropdown";
 import { useEffect, useState } from "react";
 import { useSQLiteContext } from "expo-sqlite";
+import { useTasks } from "../context/TaskContext.js";
+import { useCategories } from "../context/CategoryContext.js";
 import { createTask } from "../services/taskServices.js";
 import { useNavigation } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker"
+import createCategoryService from "../services/categoryService.js";
 
 export default function TaskCreateScreen() {
 
@@ -15,16 +18,17 @@ export default function TaskCreateScreen() {
     const [subtasks, setSubtasks] = useState([]);
     const [subtaskTitle, setSubtaskTitle] = useState('');
     const [category, setCategory] = useState([]);
-    const [categories, setCategories] = useState([]);
     const [newCategory, setNewCategory] = useState(null);
     const [categoryError, setCategoryError] = useState('')
     const [date, setDate] = useState(new Date());
     const [time, setTime] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimeicker, setShowTimeicker] = useState(false);
-
-    const db = useSQLiteContext();
     const navigation = useNavigation();
+
+    const { createTask, updateTask, removeTask } = useTasks();
+    const { categories, createCategory, setCategories } = useCategories();
+    
 
     useEffect(() => {
         loadCategories();
@@ -70,30 +74,20 @@ export default function TaskCreateScreen() {
                     setNewCategory(null);
                     return
                 }
-                const result = await db.runAsync(
-                    `
-                    INSERT INTO categories (
-                        name,
-                        created_at
-                    )
-                    VALUES (?, ?)
-                    `,
-                    newCategory,
-                    new Date().toISOString()                    
-                );
+                const result = await createCategory(newCategory)
                 categoryId = result.lastInsertRowId;
             }
 
-            await createTask(db, {
+            await createTask({
                 title,
                 description,
 
-                categoryId,
+                categoryId: category?.id,
 
                 scheduleType: "none",
                 recurrenceType: "none",
                 subtasks,
-            });
+            })
 
                 // const taskResult = await txn.runAsync(
                 //     `

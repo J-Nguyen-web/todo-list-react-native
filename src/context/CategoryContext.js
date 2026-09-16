@@ -1,5 +1,6 @@
 import { useSQLiteContext } from "expo-sqlite";
 import { createContext, useContext, useEffect, useState } from "react";
+import createCategoryService from "../services/categoryService.js";
 
 const CategoryContext = createContext();
 
@@ -18,8 +19,12 @@ export function CategoryProvider({ children }) {
         setCategories(loaded)
     }
 
+    async function createCategory(newCategory) {
+        await createCategoryService(db, newCategory);
+    }
+
     return (
-        <CategoryContext.Provider  value = {{categories, setCategories}}>
+        <CategoryContext.Provider  value = {{categories, createCategory, setCategories}}>
             { children }
         </CategoryContext.Provider>
     )

@@ -7,6 +7,7 @@ import { enableScreens } from 'react-native-screens';
 import { NavigationContainer } from '@react-navigation/native';
 import { SQLiteProvider } from 'expo-sqlite';
 import { migrateDbIfNeeded } from './src/database/migrations.js';
+import { TaskProvider } from './src/context/TaskContext.js';
 
 enableScreens();
 
@@ -18,12 +19,14 @@ export default function App() {
         onInit={migrateDbIfNeeded}
     >
         <CategoryProvider>
-            <SafeAreaProvider>
-                <NavigationContainer>
-                    <StatusBar style='auto'/>
-                            <RootNavigator />
-                </NavigationContainer>
-            </SafeAreaProvider>
+            <TaskProvider>
+                <SafeAreaProvider>
+                    <NavigationContainer>
+                        <StatusBar style='auto'/>
+                                <RootNavigator />
+                    </NavigationContainer>
+                </SafeAreaProvider>
+            </TaskProvider>
         </CategoryProvider>        
     </SQLiteProvider>
 
