@@ -1,6 +1,6 @@
 import { useSQLiteContext } from "expo-sqlite";
 import { createContext, useContext, useEffect, useState } from "react";
-import { createTaskService, deleteTask } from "../services/taskServices.js";
+import { createTaskService, deleteTask, getTasksService } from "../services/taskServices.js";
 
 const TaskContext = createContext();
 
@@ -13,9 +13,7 @@ export function TaskProvider({ children }) {
     },[])
 
     async function loadTasks() {
-        const loaded = await db.getAllAsync(
-            "SELECT * FROM tasks ORDER BY name"
-        )
+        const loaded = await getTasksService(db)
         setTasks(loaded)
     }
 

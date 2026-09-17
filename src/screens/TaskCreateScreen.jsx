@@ -28,21 +28,6 @@ export default function TaskCreateScreen() {
 
     const { createTask, updateTask, removeTask } = useTasks();
     const { categories, createCategory, setCategories } = useCategories();
-    
-
-    useEffect(() => {
-        loadCategories();
-    },[])
-
-    async function loadCategories() {
-        const loadedCategories = await db.getAllAsync(
-            `
-            SELECT * FROM categories
-            ORDER BY name ASC
-            `
-        )
-        setCategories(loadedCategories)
-    }
 
     const dropdownCategories = categories.map((item) => ({
         label: item.name,
@@ -184,7 +169,7 @@ export default function TaskCreateScreen() {
             return updateSubtasks;
         })
     }
-// todo not empty category name
+
     function handleNewCategory() {
         setNewCategory('')
     }

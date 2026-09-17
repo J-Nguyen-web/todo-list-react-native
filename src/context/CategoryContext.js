@@ -1,6 +1,6 @@
 import { useSQLiteContext } from "expo-sqlite";
 import { createContext, useContext, useEffect, useState } from "react";
-import createCategoryService from "../services/categoryService.js";
+import { createCategoryService, getCategories } from "../services/categoryService.js";
 
 const CategoryContext = createContext();
 
@@ -13,14 +13,13 @@ export function CategoryProvider({ children }) {
     },[])
 
     async function loadCategories() {
-        const loaded = await db.getAllAsync(
-            "SELECT * FROM categories ORDER BY name"
-        )
+        const loaded = await getCategories(db);
         setCategories(loaded)
     }
 
     async function createCategory(newCategory) {
         await createCategoryService(db, newCategory);
+        await loadCategories();
     }
 
     return (

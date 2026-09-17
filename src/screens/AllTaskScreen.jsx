@@ -1,29 +1,23 @@
 import { FlatList, StyleSheet, View, Text, Pressable, TouchableOpacity, Button } from "react-native";
-import CardTask from "../components/CardTask.jsx";
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { tasks } from "../constants/tasks.js";
 import { useEffect, useRef, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import categoriesGroup from "../util/categoriesGroup.js";
 import { CATEGORY_CONFIG } from "../constants/categories.js";
+import { useTasks } from "../context/TaskContext.js";
+import { useCategories } from "../context/CategoryContext.js";
 import CardCategory from "../components/CardCategory.jsx";
-import { getTasks } from "../services/taskServices.js";
-import { useSQLiteContext } from "expo-sqlite";
+import CardTask from "../components/CardTask.jsx";
+import categoriesGroup from "../util/categoriesGroup.js";
 
 export default function AllTaskScreen() {
 
     const categoryList = useRef(null);
-    const [tasks, setTasks] = useState([]);
-    const [categories, setCategories] = useState([]);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
     // const categoryType = CATEGORY_CONFIG[]
 
-    useEffect(() => {
-        // setCategories(categoriesGroup(tasks))
-        loadCategories()
-        handleGetTasks();
-    },[])    
+    const { tasks } = useTasks();
+    const { categories } = useCategories();
 
     const handleFavScroll = (event) => {
         const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
@@ -33,25 +27,8 @@ export default function AllTaskScreen() {
 
         setCanScrollLeft(offsetX > 5);
         setCanScrollRight(maxOffset > 5 && offsetX < maxOffset - 5);
-    }    
-    
-    const db = useSQLiteContext();
-
-    async function handleGetTasks() {
-        const tasks = await getTasks(db)
-        setTasks(tasks)
     }
 
-    async function loadCategories() {
-        const loadedCategories = await db.getAllAsync(
-            `
-            SELECT * FROM categories
-            ORDER BY name ASC
-            `
-        )
-        setCategories(loadedCategories)
-    }       
-    
     return (
         <View style={styles.container}>
             <View style={styles.header}>

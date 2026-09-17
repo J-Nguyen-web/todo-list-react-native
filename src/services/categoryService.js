@@ -1,4 +1,4 @@
-export default function createCategoryService(db, newCategory) {
+export async function createCategoryService(db, newCategory) {
     await db.runAsync(
     `
     INSERT INTO categories (
@@ -10,10 +10,10 @@ export default function createCategoryService(db, newCategory) {
     newCategory,
     new Date().toISOString()                    
     );
-    categoryId = result.lastInsertRowId;
+    // categoryId = result.lastInsertRowId;
 }
 
-export default function getCategories(db){
+export async function getCategories(db){
     const loadedCategories = db.getAllAsync(
             `
             SELECT * FROM categories

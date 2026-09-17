@@ -1,5 +1,5 @@
 import * as SQLite from "expo-sqlite";
-
+// todo change category_id bcoz screens use categoryId
 export async function migrateDbIfNeeded(db) {
     
     await db.execAsync(`
