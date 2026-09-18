@@ -22,3 +22,23 @@ export async function getCategories(db){
         );
     return loadedCategories;
 }
+
+export async function updateCategoryService(db, category, id){
+    await db.runAsync(
+        `
+        UPDATE categories
+        SET name = ?,
+            icon = ?,
+            color = ?,
+            background = ?,
+            updatedAt = ?,
+        WHERE id = ?
+        `,
+        category.name ,
+        category.icon ,
+        category.color ,
+        category.background ,
+        new Date().toISOString(),
+        id
+    )
+}

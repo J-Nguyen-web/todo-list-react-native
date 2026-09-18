@@ -79,8 +79,7 @@ export async function updateTaskService(db, task, id) {
         task.description,
         task.category_id,
         new Date().toISOString(),
-        id
-        
+        id        
     )
 }
 

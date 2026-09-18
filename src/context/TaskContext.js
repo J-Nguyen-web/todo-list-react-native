@@ -23,7 +23,7 @@ export function TaskProvider({ children }) {
     }
     
     async function updateTask(db, task, id) {
-        await updateTaskService(db, id)
+        await updateTaskService(db, task, id)
         await loadTasks();
     }
 
