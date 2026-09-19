@@ -5,12 +5,15 @@ import { useEffect, useState } from "react";
 import { useSQLiteContext } from "expo-sqlite";
 
 export default function CardTask({task, categories}) {
+        console.log("CARD TASK RENDER");
+    console.log("task:", task);
+    console.log("categories:", categories);
     console.log('before return')
     if (!task || !categories) return null
 
     console.log('TASK.......', task)
     console.log('CATEGORIES:....   ' ,categories)
-    const category = categories.find( item => Number(item.id) === Number(task.category_id) )
+    const category = categories.find( item => Number(item.id) === Number(task.categoryId) )
     console.log('CATEGORY...',category)
 
     // const categoryType = CATEGORY_CONFIG[category_id]
@@ -36,7 +39,7 @@ export default function CardTask({task, categories}) {
 
                 <View style={styles.titleContainer}>
                     <Text style={{flexWrap: 'wrap'}}>{task.title}</Text>
-                    <Text style={{ color: category?.color}}>{category?.title}</Text>
+                    <Text style={{ color: category?.color}}>{category?.name}</Text>
                 </View>
             </View>
             <View style={styles.rightPart}>

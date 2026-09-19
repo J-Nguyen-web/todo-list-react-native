@@ -1,6 +1,6 @@
 import { useSQLiteContext } from "expo-sqlite";
 import { createContext, useContext, useEffect, useState } from "react";
-import { createTaskService, deleteTask, getTasksService } from "../services/taskServices.js";
+import { createTaskService, deleteTask, getTasksService, updateTaskService } from "../services/taskServices.js";
 
 const TaskContext = createContext();
 
@@ -22,7 +22,7 @@ export function TaskProvider({ children }) {
         await loadTasks();
     }
     
-    async function updateTask(db, task, id) {
+    async function updateTask(task, id) {
         await updateTaskService(db, task, id)
         await loadTasks();
     }

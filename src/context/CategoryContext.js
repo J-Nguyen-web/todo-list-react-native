@@ -28,7 +28,7 @@ export function CategoryProvider({ children }) {
     }    
 
     return (
-        <CategoryContext.Provider  value = {{categories, createCategory, setCategories}}>
+        <CategoryContext.Provider  value = {{categories, setCategories, createCategory, updateCategory}}>
             { children }
         </CategoryContext.Provider>
     )

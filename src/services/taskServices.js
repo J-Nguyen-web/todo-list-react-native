@@ -56,8 +56,27 @@ export async function getTasksService(db) {
                 task.id
             );
 
+            // explicitly transfer the value, that keeps the JS camelStructure and SQL convention for names
             return {
-                ...task,
+                id: task.id,
+                title: task.title,
+                description: task.description,
+                categoryId: task.category_id,
+                
+                completed: task.completed,
+                
+                scheduleType: task.schedule_type,
+                date: task.date,
+                startTime: task.start_time,
+                endTime: task.end_time,
+
+                recurrenceType: task.recurrence_type,
+                recurrenceData: task.recurrence_data
+                    ? JSON.parse(task.recurrence_data)
+                    : null,
+
+                createdAt: task.created_at,
+                updatedAt: task.updated_at,
                 subtasks,
             };
         })
@@ -72,7 +91,7 @@ export async function updateTaskService(db, task, id) {
         SET title = ?,
             description = ?,
             category_id = ?,
-            updated_at = ?,
+            updated_at = ?
 
         WHERE id = ?`,
         task.title,

@@ -1,17 +1,17 @@
 import { LinearGradient } from "expo-linear-gradient";
+import { useSQLiteContext } from "expo-sqlite";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useEffect, useRef, useState } from "react";
 import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTasks } from "../context/TaskContext.js";
+import { useCategories } from "../context/CategoryContext.js";
+import categoriesGroup from "../util/categoriesGroup.js";
+import CardCategory from "../components/CardCategory.jsx";
+import getCategories from "../services/categoryService.js";
 import CardTask from "../components/CardTask.jsx";
 import Heading from "../components/ui/Heading.jsx";
 import CardFavCategories from "../components/CardFavCategories.jsx";
-import { tasks } from "../constants/tasks.js";
-import { useEffect, useRef, useState } from "react";
-import categoriesGroup from "../util/categoriesGroup.js";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import CardCategory from "../components/CardCategory.jsx";
-import { useSQLiteContext } from "expo-sqlite";
-import { getTasks } from "../services/taskServices.js";
-import getCategories from "../services/categoryService.js";
 
 const greeting = 'Good Morning' // todo changable depending on the hours of the day
 const username = 'Nguyen' // todo changable depending on the user.username
@@ -27,18 +27,11 @@ export default function HomeNavigator() {
     
     const favListRef = useRef(null);
     const [favCategories, setFavCategories] = useState();
-    const [tasks, setTasks] = useState([]);
-    const [categories, setCategories] = useState([]);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
-
-    const db = useSQLiteContext();
-
-    useEffect(() => {
-        setFavCategories(categoriesGroup(tasks))
-        loadTasks()
-        loadCategories()
-    },[])
+    
+    const { tasks } = useTasks();
+    const { categories } = useCategories();
 
     const handleFavScroll = (event) => {
         const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
@@ -48,16 +41,6 @@ export default function HomeNavigator() {
 
         setCanScrollLeft(offsetX > 5);
         setCanScrollRight(maxOffset > 5 && offsetX < maxOffset - 5);
-    }
-
-    async function loadTasks() {
-        const loadedTasks = await getTasks(db);
-        setTasks(loadedTasks);
-    }
-
-    async function loadCategories() {
-        const loadedCategories = await getCategories(db);
-        setCategories(loadedCategories);
     }
 
     return (
