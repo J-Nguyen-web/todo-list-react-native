@@ -1,34 +1,33 @@
 import { StyleSheet, View, Text } from "react-native";
+import { useTasks } from "../context/TaskContext.js";
 import { CATEGORY_CONFIG } from "../constants/categories.js";
 
-export default function CardCategory({
-    category,
-    tasks,
-    variant
-}) {
+export default function CardCategory({category,variant}) {
 
-    const categoryType = CATEGORY_CONFIG[category] ?? CATEGORY_CONFIG.Personal
-    const Icon = categoryType.Icon
+    const { tasks } = useTasks();
+
+    const taskCount = tasks.filter( task => task.categoryId === category.id).length
 
     if (variant == "favorite") {
         const favTypes = ['Work', 'Study', 'Shopping', 'Health','Daily', 'Personal']
-        if (!favTypes.includes(category)){
+        if (!favTypes.includes(category.name)){
             return null
         }
     }
     const styles = variantStyles[variant]; // в зависимост от варианта на стила се извлича от обекта със стилове най-отдолу
 
     return (
-        <View style={[styles.cardContainer, {backgroundColor: categoryType.background}]}>
+        <View style={[styles.cardContainer, {backgroundColor: category.background}]}>
             <View style={styles.category}>
-                <Icon name={categoryType.icon} size={variant == "allTasksCategories" ? 22 : categoryType.size} color={categoryType.color} />
-                <Text style={[styles.categoryTitle, {color: categoryType.color}]}> {category} </Text>
+                {/* <Icon name={category.icon} size={variant == "allTasksCategories" ? 22 : category.size} color={category.color} /> */}
+                <Text> {category.icon} </Text>
+                <Text style={[styles.categoryTitle, {color: category.color}]}> {category.name} </Text>
             </View>
 
             {variant == "allTasksCategories" ? ('')
                 :(
-                    <Text style={[styles.taskCount, {color: categoryType.color}]}>
-                        {tasks.length} {tasks.length > 1 ? 'tasks' : 'task'}
+                    <Text style={[styles.taskCount, {color: category.color}]}>
+                        {taskCount} {taskCount > 1 ? 'tasks' : 'task'}
                     </Text> 
                 )
             }

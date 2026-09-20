@@ -5,10 +5,6 @@ import { useEffect, useState } from "react";
 import { useSQLiteContext } from "expo-sqlite";
 
 export default function CardTask({task, categories}) {
-        console.log("CARD TASK RENDER");
-    console.log("task:", task);
-    console.log("categories:", categories);
-    console.log('before return')
     if (!task || !categories) return null
 
     console.log('TASK.......', task)
@@ -84,6 +80,7 @@ const styles = StyleSheet.create({
     leftPart: {
         flexDirection: 'row',
         alignItems: 'flex-start',
+        textAlign: 'center',
         width: '70%',
         gap: '3%',
     },

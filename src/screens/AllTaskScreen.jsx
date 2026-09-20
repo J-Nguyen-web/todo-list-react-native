@@ -45,14 +45,14 @@ export default function AllTaskScreen() {
                 </View>
             </View>
 
-            {/* <View style={styles.allCategories}>
+            <View style={styles.allCategories}>
                 <FlatList
                     ref={categoryList}
                     contentContainerStyle={styles.categoryList}
                     horizontal
                     data={categories}
-                    keyExtractor={(item) => item}
-                    renderItem={({item}) => <CardCategory {...item} variant="allTasksCategories" />}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={({item}) => <CardCategory category={item} variant="allTasksCategories" />}
                     showsHorizontalScrollIndicator={false}
                     onScroll={handleFavScroll}
                     scrollEventThrottle={16}
@@ -118,7 +118,7 @@ export default function AllTaskScreen() {
                         </TouchableOpacity>
                     </View>
                 )}                
-            </View> */}
+            </View>
 
             <View style={styles.taskContainer}>
                 <Text>
@@ -130,10 +130,6 @@ export default function AllTaskScreen() {
                     keyExtractor={(item) => item.id.toString()}
                 />                
             </View>
-            <Button 
-                title="SHow tasks"
-                onPress={handleGetTasks}
-            />
         </View>
     );
 }
