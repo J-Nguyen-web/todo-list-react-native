@@ -7,10 +7,10 @@ import { useSQLiteContext } from "expo-sqlite";
 export default function CardTask({task, categories}) {
     if (!task || !categories) return null
 
-    console.log('TASK.......', task)
-    console.log('CATEGORIES:....   ' ,categories)
+    // console.log('TASK: ', task)
+    // console.log('CATEGORIES: ' ,categories)
     const category = categories.find( item => Number(item.id) === Number(task.categoryId) )
-    console.log('CATEGORY...',category)
+    console.log('CATEGORY: ',category)
 
     // const categoryType = CATEGORY_CONFIG[category_id]
     // const Icon = categoryType.Icon
@@ -30,7 +30,7 @@ export default function CardTask({task, categories}) {
                         size={categoryType.size}
                         color={categoryType.color}
                     />                     */}
-                    <Text>{category?.icon}</Text>
+                    <Text style={{fontSize:32}}>{category?.icon}</Text>
                 </View>
 
                 <View style={styles.titleContainer}>

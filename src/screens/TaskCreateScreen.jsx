@@ -67,7 +67,7 @@ export default function TaskCreateScreen() {
                 title,
                 description,
 
-                categoryId: category?.id,
+                categoryId: category,
 
                 scheduleType: "none",
                 recurrenceType: "none",
@@ -255,7 +255,7 @@ export default function TaskCreateScreen() {
                     </View>
                     <View style={styles.partition}>
                         <Text style={styles.subTitle}>Category</Text>
-                        { categoryError&& (
+                        { categoryError && (
                             <Text style={styles.errorText}>
                                 {categoryError}
                             </Text>

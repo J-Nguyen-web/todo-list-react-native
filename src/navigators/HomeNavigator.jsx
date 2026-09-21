@@ -26,7 +26,7 @@ const FADE_HEIGHT = 160; // fade starts 160 units before image ends
 export default function HomeNavigator() {
     
     const favListRef = useRef(null);
-    const [favCategories, setFavCategories] = useState();
+    const [favCategories, setFavCategories] = useState(); // todo favCategories
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
     
@@ -82,7 +82,7 @@ export default function HomeNavigator() {
                             <FlatList
                                 ref={favListRef}
                                 data={favCategories}
-                                renderItem={({item}) => <CardCategory {...item} variant="favorite"/>}
+                                renderItem={({item}) => <CardCategory category={item} variant="favorite"/>}
                                 keyExtractor={(item) => item.category}
                                 horizontal
                                 contentContainerStyle={styles.favListContent}

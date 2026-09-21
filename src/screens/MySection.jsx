@@ -1,18 +1,15 @@
 import { FlatList, StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import CardCategory from "../components/CardCategory.jsx";
-import { tasks } from "../constants/tasks.js";
 import { useEffect, useState } from "react";
 import { globalColor } from "../globalStyles.js";
 import { AntDesign } from "@expo/vector-icons";
+import { useTasks } from "../context/TaskContext.js";
+import { useCategories } from "../context/CategoryContext.js";
 import categoriesGroup from "../util/categoriesGroup.js";
+import CardCategory from "../components/CardCategory.jsx";
 
 export default function MySection() {
 
-    const [categories, setCategories] = useState();
-    
-    useEffect(() => {
-        setCategories(categoriesGroup(tasks))
-    },[])
+    const { categories } = useCategories();
     
     return (
         <View style={styles.container}>
@@ -31,8 +28,8 @@ export default function MySection() {
                 </View>
                 <FlatList
                     data={categories}
-                    renderItem={({item}) => <CardCategory {...item} variant="sectionCategories"/>}
-                    keyExtractor={(item) => item.category}
+                    renderItem={({item}) => <CardCategory category={item} variant="sectionCategories"/>}
+                    keyExtractor={(item) => item.id.toString()}
                 />
         </View>
     );

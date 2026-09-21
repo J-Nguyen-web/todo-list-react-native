@@ -7,10 +7,11 @@ export default function CardCategory({category,variant}) {
     const { tasks } = useTasks();
 
     const taskCount = tasks.filter( task => task.categoryId === category.id).length
-
+            console.log('PROFILE',category)
     if (variant == "favorite") {
         const favTypes = ['Work', 'Study', 'Shopping', 'Health','Daily', 'Personal']
         if (!favTypes.includes(category.name)){
+
             return null
         }
     }
