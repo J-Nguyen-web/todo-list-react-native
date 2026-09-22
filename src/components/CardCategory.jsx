@@ -1,6 +1,7 @@
 import { StyleSheet, View, Text } from "react-native";
 import { useTasks } from "../context/TaskContext.js";
 import { CATEGORY_CONFIG } from "../constants/categories.js";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function CardCategory({category,variant}) {
 
@@ -21,17 +22,27 @@ export default function CardCategory({category,variant}) {
         <View style={[styles.cardContainer, {backgroundColor: category.background}]}>
             <View style={styles.category}>
                 {/* <Icon name={category.icon} size={variant == "allTasksCategories" ? 22 : category.size} color={category.color} /> */}
-                <Text> {category.icon} </Text>
+                <Text style={styles.icon}> {category.icon} </Text>
                 <Text style={[styles.categoryTitle, {color: category.color}]}> {category.name} </Text>
             </View>
 
-            {variant == "allTasksCategories" ? ('')
-                :(
-                    <Text style={[styles.taskCount, {color: category.color}]}>
-                        {taskCount} {taskCount > 1 ? 'tasks' : 'task'}
-                    </Text> 
-                )
-            }
+            <View style={styles.rightSide}>
+                {variant == "allTasksCategories" ? ('')
+                    :(
+                        <Text style={[styles.taskCount, {color: category.color}]}>
+                            {taskCount} {taskCount > 1 ? 'tasks' : 'task'}
+                        </Text> 
+                    )
+                }
+                {variant == "sectionCategories" && (
+                    category.favorite ? (
+                        <MaterialIcons name="favorite" size={28} color="red" />
+                        ) : (
+                        <MaterialIcons name="favorite-outline" size={28} color="gray" />
+                    )
+                    
+                )}            
+            </View>
         </View>
     );
 }
@@ -77,7 +88,8 @@ const variantStyles={
             alignItems: 'center',
             height: 60,
             margin: 6,
-            padding: 18,
+            padding: 8,
+            paddingHorizontal: 18,
 
             // iOs
             shadowColor: '#000',
@@ -92,6 +104,10 @@ const variantStyles={
             elevation: 3
         },
 
+        icon: {
+            fontSize: 28
+        },
+
         category: {
             flexDirection: 'row',
             gap: 14,
@@ -101,6 +117,8 @@ const variantStyles={
         categoryTitle: {
             fontSize: 20
         },
+
+        rightSide: {flexDirection: 'row', gap: 14, alignItems: 'center'},
 
         taskCount: {
             fontSize: 16,
