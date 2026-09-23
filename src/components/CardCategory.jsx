@@ -1,11 +1,13 @@
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { useTasks } from "../context/TaskContext.js";
+import { useCategories } from "../context/CategoryContext.js";
 import { CATEGORY_CONFIG } from "../constants/categories.js";
 import { MaterialIcons } from "@expo/vector-icons";
 
 export default function CardCategory({category,variant}) {
 
     const { tasks } = useTasks();
+    const { categories, updateCategory} = useCategories();
 
     const taskCount = tasks.filter( task => task.categoryId === category.id).length
             console.log('PROFILE',category)
@@ -17,6 +19,13 @@ export default function CardCategory({category,variant}) {
         }
     }
     const styles = variantStyles[variant]; // в зависимост от варианта на стила се извлича от обекта със стилове най-отдолу
+
+    async function handleFavoriteCategory() {
+        const updatedCategory = {
+            ...category,
+            favorite: category.favorite ? 0 : 1
+        }
+    }
 
     return (
         <View style={[styles.cardContainer, {backgroundColor: category.background}]}>
@@ -35,12 +44,18 @@ export default function CardCategory({category,variant}) {
                     )
                 }
                 {variant == "sectionCategories" && (
-                    category.favorite ? (
-                        <MaterialIcons name="favorite" size={28} color="red" />
-                        ) : (
-                        <MaterialIcons name="favorite-outline" size={28} color="gray" />
-                    )
-                    
+                <View style={styles.rightSide}>
+                        <TouchableOpacity onPress={handleFavoriteCategory}>
+                            {category.favorite ? (
+                                <MaterialIcons name="favorite" size={28} color="red" />
+                            ) : (
+                                <MaterialIcons name="favorite-outline" size={28} color="gray" />
+                            )}
+                        </TouchableOpacity>
+                        <TouchableOpacity>
+                            <MaterialIcons name="delete-forever" size={28} color="red"/>
+                        </TouchableOpacity>
+                    </View>
                 )}            
             </View>
         </View>
@@ -118,7 +133,7 @@ const variantStyles={
             fontSize: 20
         },
 
-        rightSide: {flexDirection: 'row', gap: 14, alignItems: 'center'},
+        rightSide: {flexDirection: 'row', gap: 8, alignItems: 'center'},
 
         taskCount: {
             fontSize: 16,

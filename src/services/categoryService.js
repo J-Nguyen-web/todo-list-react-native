@@ -31,6 +31,7 @@ export async function updateCategoryService(db, category, id){
             icon = ?,
             color = ?,
             background = ?,
+            favorite = ?,
             updatedAt = ?,
         WHERE id = ?
         `,
@@ -38,6 +39,7 @@ export async function updateCategoryService(db, category, id){
         category.icon ,
         category.color ,
         category.background ,
+        category.favorite ,
         new Date().toISOString(),
         id
     )
