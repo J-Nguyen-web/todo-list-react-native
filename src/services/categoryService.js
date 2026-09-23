@@ -23,24 +23,37 @@ export async function getCategories(db){
     return loadedCategories;
 }
 
-export async function updateCategoryService(db, category, id){
+export async function updateCategoryService(db, id, updates){
+
+    // upgraded method - при който може да се предава само това което ще update, вместо целия category object
+    const fields = Object.keys(updates);
+    const values = Object.values(updates);
+    const setClause = fields.map(field => `${field} = ?`).join(', ')
+    
     await db.runAsync(
         `
         UPDATE categories
-        SET name = ?,
-            icon = ?,
-            color = ?,
-            background = ?,
-            favorite = ?,
-            updatedAt = ?,
+        SET ${setClause},
         WHERE id = ?
         `,
-        category.name ,
-        category.icon ,
-        category.color ,
-        category.background ,
-        category.favorite ,
-        new Date().toISOString(),
-        id
-    )
+        [...values, id]
+
+        // императивен подробен вариант
+        // UPDATE categories
+        // SET $name = ?,
+        //     icon = ?,
+        //     color = ?,
+        //     background = ?,
+        //     favorite = ?,
+        //     updatedAt = ?,
+        // WHERE id = ?
+        // `,
+        // category.name ,
+        // category.icon ,
+        // category.color ,
+        // category.background ,
+        // category.favorite ,
+        // new Date().toISOString(),
+        // id        
+    );
 }

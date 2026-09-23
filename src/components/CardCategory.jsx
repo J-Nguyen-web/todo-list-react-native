@@ -22,9 +22,11 @@ export default function CardCategory({category,variant}) {
 
     async function handleFavoriteCategory() {
         const updatedCategory = {
-            ...category,
             favorite: category.favorite ? 0 : 1
         }
+
+        //instead of putting const variable we can directly put the object
+        await updateCategory(category.id, {favorite: category.favorite ? 0 : 1} )
     }
 
     return (
