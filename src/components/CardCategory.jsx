@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
 import { useTasks } from "../context/TaskContext.js";
 import { useCategories } from "../context/CategoryContext.js";
 import { CATEGORY_CONFIG } from "../constants/categories.js";
@@ -7,10 +7,9 @@ import { MaterialIcons } from "@expo/vector-icons";
 export default function CardCategory({category,variant}) {
 
     const { tasks } = useTasks();
-    const { categories, updateCategory} = useCategories();
+    const { categories, updateCategory, deleteCategory} = useCategories();
 
     const taskCount = tasks.filter( task => task.categoryId === category.id).length
-            console.log('PROFILE',category)
     if (variant == "favorite") {
         const favTypes = ['Work', 'Study', 'Shopping', 'Health','Daily', 'Personal']
         if (!favTypes.includes(category.name)){
@@ -27,6 +26,26 @@ export default function CardCategory({category,variant}) {
 
         //instead of putting const variable we can directly put the object
         await updateCategory(category.id, {favorite: category.favorite ? 0 : 1} )
+    }
+
+    async function handleDeleteCategory() {
+        Alert.alert(
+            "Delete category",
+            `Are you sure you want delete category "${category.name}"?`,
+            [
+                {
+                    text: "Dismiss",
+                    style: "cancel",
+                },
+                {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: async () => {
+                        await deleteCategory(category.id);
+                    },
+                },
+            ]
+        );
     }
 
     return (
@@ -54,7 +73,7 @@ export default function CardCategory({category,variant}) {
                                 <MaterialIcons name="favorite-outline" size={28} color="gray" />
                             )}
                         </TouchableOpacity>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={handleDeleteCategory}>
                             <MaterialIcons name="delete-forever" size={28} color="red"/>
                         </TouchableOpacity>
                     </View>

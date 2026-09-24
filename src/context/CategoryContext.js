@@ -1,6 +1,6 @@
 import { useSQLiteContext } from "expo-sqlite";
 import { createContext, useContext, useEffect, useState } from "react";
-import { createCategoryService, getCategories, updateCategoryService } from "../services/categoryService.js";
+import { createCategoryService, deleteCategoryService, getCategories, updateCategoryService } from "../services/categoryService.js";
 
 const CategoryContext = createContext();
 
@@ -22,13 +22,18 @@ export function CategoryProvider({ children }) {
         await loadCategories();
     }
 
-    async function updateCategory(newCategory, id) {
-        await updateCategoryService(db, newCategory, id);
+    async function updateCategory(id, updates) {
+        await updateCategoryService(db, id, updates);
         await loadCategories();
-    }    
+    }
+    
+    async function deleteCategory(id) {
+        await deleteCategoryService(db, id)
+        await loadCategories();
+    }
 
     return (
-        <CategoryContext.Provider  value = {{categories, setCategories, createCategory, updateCategory}}>
+        <CategoryContext.Provider  value = {{categories, setCategories, createCategory, updateCategory, deleteCategory}}>
             { children }
         </CategoryContext.Provider>
     )

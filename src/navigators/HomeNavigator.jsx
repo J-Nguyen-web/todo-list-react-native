@@ -26,12 +26,14 @@ const FADE_HEIGHT = 160; // fade starts 160 units before image ends
 export default function HomeNavigator() {
     
     const favListRef = useRef(null);
-    const [favCategories, setFavCategories] = useState(); // todo favCategories
+    // const [favCategories, setFavCategories] = useState(); // todo favCategories
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
     
     const { tasks } = useTasks();
     const { categories } = useCategories();
+
+    const favCategories = categories.filter( category => category.favorite === 1)
 
     const handleFavScroll = (event) => {
         const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
@@ -83,7 +85,7 @@ export default function HomeNavigator() {
                                 ref={favListRef}
                                 data={favCategories}
                                 renderItem={({item}) => <CardCategory category={item} variant="favorite"/>}
-                                keyExtractor={(item) => item.category}
+                                keyExtractor={(item) => item.id.toString()}
                                 horizontal
                                 contentContainerStyle={styles.favListContent}
                                 showsHorizontalScrollIndicator={false}
