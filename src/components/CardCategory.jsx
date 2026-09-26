@@ -1,23 +1,22 @@
-import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, Alert, TextInput, ScrollView, KeyboardAvoidingView } from "react-native";
 import { useTasks } from "../context/TaskContext.js";
 import { useCategories } from "../context/CategoryContext.js";
 import { CATEGORY_CONFIG } from "../constants/categories.js";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Feather, FontAwesome6, MaterialIcons } from "@expo/vector-icons";
+import { useEffect, useRef, useState } from "react";
 
 export default function CardCategory({category,variant}) {
 
+    const [isEditing, setIsEditing] = useState(false);
+    const [newCategoryName, setNewCategoryName] = useState(category.name)
+
     const { tasks } = useTasks();
     const { categories, updateCategory, deleteCategory} = useCategories();
+    const favTypes = ['Work', 'Study', 'Shopping', 'Health','Daily', 'Personal']
 
     const taskCount = tasks.filter( task => task.categoryId === category.id).length
-    if (variant == "favorite") {
-        const favTypes = ['Work', 'Study', 'Shopping', 'Health','Daily', 'Personal']
-        if (!favTypes.includes(category.name)){
 
-            return null
-        }
-    }
-    const styles = variantStyles[variant]; // в зависимост от варианта на стила се извлича от обекта със стилове най-отдолу
+    const styles = variantStyles[variant]; // в зависимост от варианта на стила се извлича от обекта със стилове най-отдолу    
 
     async function handleFavoriteCategory() {
         const updatedCategory = {
@@ -28,24 +27,40 @@ export default function CardCategory({category,variant}) {
         await updateCategory(category.id, {favorite: category.favorite ? 0 : 1} )
     }
 
+    async function handleEditCategory() {
+        setNewCategoryName(category.name);
+        setIsEditing(true)
+    }
+
+    async function handleSaveEditedCategory() {
+        console.log('PRESSED')
+
+        await updateCategory(category.id, {name: newCategoryName.trim()})
+        setIsEditing(false)
+    }
+
     async function handleDeleteCategory() {
-        Alert.alert(
-            "Delete category",
-            `Are you sure you want delete category "${category.name}"?`,
-            [
-                {
-                    text: "Dismiss",
-                    style: "cancel",
-                },
-                {
-                    text: "Delete",
-                    style: "destructive",
-                    onPress: async () => {
-                        await deleteCategory(category.id);
+        if(favTypes.includes(category.name)){
+            Alert.alert("Main category cannot be deleted!")
+        } else {
+            Alert.alert(
+                "Delete category",
+                `Are you sure you want delete category "${category.name}"?`,
+                [
+                    {
+                        text: "Dismiss",
+                        style: "cancel",
                     },
-                },
-            ]
-        );
+                    {
+                        text: "Delete",
+                        style: "destructive",
+                        onPress: async () => {
+                            await deleteCategory(category.id);
+                        },
+                    },
+                ]
+            );
+        }
     }
 
     return (
@@ -53,7 +68,30 @@ export default function CardCategory({category,variant}) {
             <View style={styles.category}>
                 {/* <Icon name={category.icon} size={variant == "allTasksCategories" ? 22 : category.size} color={category.color} /> */}
                 <Text style={styles.icon}> {category.icon} </Text>
-                <Text style={[styles.categoryTitle, {color: category.color}]}> {category.name} </Text>
+                {isEditing ? (
+                    <KeyboardAvoidingView>
+                    <View style={{flexDirection: 'row', gap: 8}}>
+                        <TextInput 
+                            value={newCategoryName}
+                            onChangeText={setNewCategoryName}
+                            style={styles.editName}
+                        />
+                        <TouchableOpacity onPress={handleSaveEditedCategory}>
+                            <MaterialIcons name="done"  size={28} color="green" />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={()=>setIsEditing(false)}>
+                            <Feather name="x"  size={28} color="red" />
+                        </TouchableOpacity>
+                    </View>
+                    </KeyboardAvoidingView>
+
+                ):(
+                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={handleEditCategory}>
+                        <Text style={[styles.categoryTitle, {color: category.color}]}> {category.name} </Text>
+                        <FontAwesome6 name="edit" size={22} color={category.color} />
+                    </TouchableOpacity>
+                )}
+
             </View>
 
             <View style={styles.rightSide}>
@@ -158,7 +196,8 @@ const variantStyles={
 
         taskCount: {
             fontSize: 16,
-        }
+        },
+
     },
     allTasksCategories: {
         cardContainer: {

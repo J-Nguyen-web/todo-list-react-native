@@ -10,7 +10,6 @@ export default function CardTask({task, categories}) {
     // console.log('TASK: ', task)
     // console.log('CATEGORIES: ' ,categories)
     const category = categories.find( item => Number(item.id) === Number(task.categoryId) )
-    console.log('CATEGORY: ',category)
 
     // const categoryType = CATEGORY_CONFIG[category_id]
     // const Icon = categoryType.Icon
