@@ -28,6 +28,9 @@ export default function MySection() {
                 </View>
                 <FlatList
                     data={categories}
+                    keyboardShouldPersistTaps = 'always'
+                    // по този начин keyboard-a не консумира touch-a само за скриване си,
+                    // но позволява да са активни и другите части на екрана (ако се сложи вътре в card-a не работи, трябва да е в parent-a)
                     renderItem={({item}) => <CardCategory category={item} variant="sectionCategories"/>}
                     keyExtractor={(item) => item.id.toString()}
                 />

@@ -16,7 +16,16 @@ export default function CardCategory({category,variant}) {
 
     const taskCount = tasks.filter( task => task.categoryId === category.id).length
 
-    const styles = variantStyles[variant]; // в зависимост от варианта на стила се извлича от обекта със стилове най-отдолу    
+    const styles = variantStyles[variant]; // в зависимост от варианта на стила се извлича от обекта със стилове най-отдолу
+
+    const inputRef = useRef(null);
+    
+    useEffect(() => {
+        if(isEditing) {
+            inputRef.current?.focus()
+            // за директно поставяне на cursor-a в полето за писане. inputRef се поставя и в textInput виж долу
+        }
+    },[isEditing])
 
     async function handleFavoriteCategory() {
         const updatedCategory = {
@@ -34,7 +43,11 @@ export default function CardCategory({category,variant}) {
 
     async function handleSaveEditedCategory() {
         console.log('PRESSED')
-
+        if(newCategoryName.trim() === "" || !newCategoryName) {
+            Alert.alert("Name must contain at least one character")
+            setIsEditing(false);
+            return
+        }
         await updateCategory(category.id, {name: newCategoryName.trim()})
         setIsEditing(false)
     }
@@ -72,6 +85,8 @@ export default function CardCategory({category,variant}) {
                     <KeyboardAvoidingView>
                     <View style={{flexDirection: 'row', gap: 8}}>
                         <TextInput 
+                            ref={inputRef}
+                            // референция за .focus() къде да сложи cursor-a
                             value={newCategoryName}
                             onChangeText={setNewCategoryName}
                             style={styles.editName}
@@ -198,6 +213,14 @@ const variantStyles={
             fontSize: 16,
         },
 
+        editName: {
+            backgroundColor: "white",
+            borderRadius: 8,
+            paddingHorizontal: 8,
+            borderWidth: 1,
+            borderColor: "gray",
+            color: "gray"
+        }
     },
     allTasksCategories: {
         cardContainer: {
