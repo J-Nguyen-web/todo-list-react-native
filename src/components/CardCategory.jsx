@@ -36,6 +36,10 @@ export default function CardCategory({category,variant}) {
         await updateCategory(category.id, {favorite: category.favorite ? 0 : 1} )
     }
 
+    async function handleEmojiEdit(params) {
+        
+    }
+
     async function handleEditCategory() {
         setNewCategoryName(category.name);
         setIsEditing(true)
@@ -79,17 +83,18 @@ export default function CardCategory({category,variant}) {
     return (
         <View style={[styles.cardContainer, {backgroundColor: category.background}]}>
             <View style={styles.category}>
-                {/* <Icon name={category.icon} size={variant == "allTasksCategories" ? 22 : category.size} color={category.color} /> */}
-                <Text style={styles.icon}> {category.icon} </Text>
                 {isEditing ? (
                     <KeyboardAvoidingView>
-                    <View style={{flexDirection: 'row', gap: 8}}>
+                    <View style={{flexDirection: 'row', gap: 14, alignItems: 'center'}}>
+                        <TouchableOpacity style={[styles.emojiEdit,{borderColor: category.color}]} onPress={handleEmojiEdit}>
+                            <Text style={styles.icon}> {category.icon} </Text>                
+                        </TouchableOpacity>
                         <TextInput 
                             ref={inputRef}
                             // референция за .focus() къде да сложи cursor-a
                             value={newCategoryName}
                             onChangeText={setNewCategoryName}
-                            style={styles.editName}
+                            style={[styles.editName, {borderColor: category.color}]}
                         />
                         <TouchableOpacity onPress={handleSaveEditedCategory}>
                             <MaterialIcons name="done"  size={28} color="green" />
@@ -101,7 +106,8 @@ export default function CardCategory({category,variant}) {
                     </KeyboardAvoidingView>
 
                 ):(
-                    <TouchableOpacity style={{flexDirection: 'row'}} onPress={handleEditCategory}>
+                    <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={handleEditCategory}>
+                        <Text style={styles.icon}> {category.icon} </Text>
                         <Text style={[styles.categoryTitle, {color: category.color}]}> {category.name} </Text>
                         <FontAwesome6 name="edit" size={22} color={category.color} />
                     </TouchableOpacity>
@@ -110,15 +116,18 @@ export default function CardCategory({category,variant}) {
             </View>
 
             <View style={styles.rightSide}>
-                {variant == "allTasksCategories" ? ('')
+                {/* {variant === "allTasksCategories" ? ('')
                     :(
                         <Text style={[styles.taskCount, {color: category.color}]}>
                             {taskCount} {taskCount > 1 ? 'tasks' : 'task'}
                         </Text> 
                     )
-                }
-                {variant == "sectionCategories" && (
+                } */}
+                {!isEditing && variant == "sectionCategories" && (
                 <View style={styles.rightSide}>
+                        <Text style={[styles.taskCount, {color: category.color}]}>
+                            {taskCount} {taskCount > 1 ? 'tasks' : 'task'}
+                        </Text> 
                         <TouchableOpacity onPress={handleFavoriteCategory}>
                             {category.favorite ? (
                                 <MaterialIcons name="favorite" size={28} color="red" />
@@ -200,7 +209,8 @@ const variantStyles={
         category: {
             flexDirection: 'row',
             gap: 14,
-            alignItems: 'center'
+            alignItems: 'center',
+            justifyContent: 'center'
         },
 
         categoryTitle: {
@@ -213,12 +223,23 @@ const variantStyles={
             fontSize: 16,
         },
 
+        emojiEdit: {
+            width: 48,
+            height: 48,
+            borderRadius: 24,
+            backgroundColor: "#fafafa",
+            borderWidth: 1,
+            alignItems: 'center',
+            justifyContent: 'center'
+            
+        },
+
         editName: {
+            height: '88%',
             backgroundColor: "white",
             borderRadius: 8,
             paddingHorizontal: 8,
             borderWidth: 1,
-            borderColor: "gray",
             color: "gray"
         }
     },
