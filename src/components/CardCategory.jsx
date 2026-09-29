@@ -80,51 +80,45 @@ export default function CardCategory({category,variant}) {
         }
     }
 
+    // todo other category card
     return (
         <View style={[styles.cardContainer, {backgroundColor: category.background}]}>
             <View style={styles.category}>
-                {isEditing ? (
+                {isEditing && (
                     <KeyboardAvoidingView>
-                    <View style={{flexDirection: 'row', gap: 14, alignItems: 'center'}}>
-                        <TouchableOpacity style={[styles.emojiEdit,{borderColor: category.color}]} onPress={handleEmojiEdit}>
-                            <Text style={styles.icon}> {category.icon} </Text>                
-                        </TouchableOpacity>
-                        <TextInput 
-                            ref={inputRef}
-                            // референция за .focus() къде да сложи cursor-a
-                            value={newCategoryName}
-                            onChangeText={setNewCategoryName}
-                            style={[styles.editName, {borderColor: category.color}]}
-                        />
-                        <TouchableOpacity onPress={handleSaveEditedCategory}>
-                            <MaterialIcons name="done"  size={28} color="green" />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={()=>setIsEditing(false)}>
-                            <Feather name="x"  size={28} color="red" />
-                        </TouchableOpacity>
-                    </View>
+                        <View style={{flexDirection: 'row', gap: 14, alignItems: 'center'}}>
+                            <TouchableOpacity style={[styles.emojiEdit,{borderColor: category.color}]} onPress={handleEmojiEdit}>
+                                <Text style={styles.icon}> {category.icon} </Text>                
+                            </TouchableOpacity>
+                            <TextInput 
+                                ref={inputRef}
+                                // референция за .focus() къде да сложи cursor-a
+                                value={newCategoryName}
+                                onChangeText={setNewCategoryName}
+                                style={[styles.editName, { color: category.color, borderColor: category.color}]}
+                            />
+                            <TouchableOpacity onPress={handleSaveEditedCategory}>
+                                <MaterialIcons name="done"  size={28} color="green" />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={()=>setIsEditing(false)}>
+                                <Feather name="x"  size={28} color="red" />
+                            </TouchableOpacity>
+                        </View>
                     </KeyboardAvoidingView>
-
-                ):(
-                    <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={handleEditCategory}>
-                        <Text style={styles.icon}> {category.icon} </Text>
-                        <Text style={[styles.categoryTitle, {color: category.color}]}> {category.name} </Text>
-                        <FontAwesome6 name="edit" size={22} color={category.color} />
-                    </TouchableOpacity>
                 )}
-
             </View>
 
-            <View style={styles.rightSide}>
-                {/* {variant === "allTasksCategories" ? ('')
-                    :(
-                        <Text style={[styles.taskCount, {color: category.color}]}>
-                            {taskCount} {taskCount > 1 ? 'tasks' : 'task'}
-                        </Text> 
-                    )
-                } */}
-                {!isEditing && variant == "sectionCategories" && (
-                <View style={styles.rightSide}>
+
+            {!isEditing && variant == "sectionCategories" && (
+                <View >
+                    <View style={styles.leftSide}>
+                        <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={handleEditCategory}>
+                            <Text style={styles.icon}> {category.icon} </Text>
+                            <Text style={[styles.categoryTitle, {color: category.color}]}> {category.name} </Text>
+                            <FontAwesome6 name="edit" size={22} color={category.color} />
+                        </TouchableOpacity>            
+                    </View>
+                    <View style={styles.rightSide}>
                         <Text style={[styles.taskCount, {color: category.color}]}>
                             {taskCount} {taskCount > 1 ? 'tasks' : 'task'}
                         </Text> 
@@ -139,8 +133,9 @@ export default function CardCategory({category,variant}) {
                             <MaterialIcons name="delete-forever" size={28} color="red"/>
                         </TouchableOpacity>
                     </View>
-                )}            
-            </View>
+                </View>
+
+            )}
         </View>
     );
 }
@@ -240,7 +235,6 @@ const variantStyles={
             borderRadius: 8,
             paddingHorizontal: 8,
             borderWidth: 1,
-            color: "gray"
         }
     },
     allTasksCategories: {
