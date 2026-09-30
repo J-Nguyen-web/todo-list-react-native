@@ -6,6 +6,7 @@ import { useTasks } from "../context/TaskContext.js";
 import { useCategories } from "../context/CategoryContext.js";
 import categoriesGroup from "../util/categoriesGroup.js";
 import CardCategory from "../components/CardCategory.jsx";
+import CardCategoryOptions from "../components/CardCategoryOptions.jsx";
 
 export default function MySection() {
 
@@ -31,7 +32,7 @@ export default function MySection() {
                     keyboardShouldPersistTaps = 'always'
                     // по този начин keyboard-a не консумира touch-a само за скриване си,
                     // но позволява да са активни и другите части на екрана (ако се сложи вътре в card-a не работи, трябва да е в parent-a)
-                    renderItem={({item}) => <CardCategory category={item} variant="sectionCategories"/>}
+                    renderItem={({item}) => <CardCategoryOptions category={item}/>}
                     keyExtractor={(item) => item.id.toString()}
                 />
         </View>
