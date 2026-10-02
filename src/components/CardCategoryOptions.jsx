@@ -1,6 +1,7 @@
 import { StyleSheet, View, Text, TouchableOpacity, Alert, TextInput, ScrollView, KeyboardAvoidingView } from "react-native";
 import { useTasks } from "../context/TaskContext.js";
 import { useCategories } from "../context/CategoryContext.js";
+import emojiRegex from "emoji-regex";
 import { Feather, FontAwesome6, MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
 
@@ -8,6 +9,7 @@ export default function CardCategoryOptions({category}) {
 
     const [isEditing, setIsEditing] = useState(false);
     const [newCategoryName, setNewCategoryName] = useState(category.name)
+    const [newEmoji, setNewEmoji] = useState(category.icon)
 
     const { tasks } = useTasks();
     const { categories, updateCategory, deleteCategory} = useCategories();
@@ -33,8 +35,16 @@ export default function CardCategoryOptions({category}) {
         await updateCategory(category.id, {favorite: category.favorite ? 0 : 1} )
     }
 
-    async function handleEmojiEdit(params) {
-        
+    function handleEmojiEdit(values) { // comes from onChangeText
+
+        if (values === ''){ // otherwise the old emoji cant be deleted and the empty value cannot be set
+            setNewEmoji('')
+            return
+        }
+        const matches = values.match(emojiRegex())
+        if(matches?.length){
+            setNewEmoji(matches[0]) // matches[0] return the first match of the emojiRegex so 'hello :D' will return only :D
+        }
     }
 
     async function handleEditCategory() {
@@ -44,12 +54,12 @@ export default function CardCategoryOptions({category}) {
 
     async function handleSaveEditedCategory() {
         console.log('PRESSED')
-        if(newCategoryName.trim() === "" || !newCategoryName) {
-            Alert.alert("Name must contain at least one character")
+        if(newCategoryName.trim() === "" || !newCategoryName || !newEmoji || newEmoji.trim() === '') {
+            Alert.alert("Name & Emoji must contain at least one character")
             setIsEditing(false);
             return
         }
-        await updateCategory(category.id, {name: newCategoryName.trim()})
+        await updateCategory(category.id, {name: newCategoryName.trim(), icon: newEmoji})
         setIsEditing(false)
     }
 
@@ -82,14 +92,18 @@ export default function CardCategoryOptions({category}) {
                 {isEditing ? (
                     <KeyboardAvoidingView>
                     <View style={{flexDirection: 'row', gap: 14, alignItems: 'center'}}>
-                        <TouchableOpacity style={[styles.emojiEdit,{borderColor: category.color}]} onPress={handleEmojiEdit}>
-                            <Text style={styles.icon}> {category.icon} </Text>                
-                        </TouchableOpacity>
+                        <TextInput
+                            value={newEmoji}
+                            onChangeText={handleEmojiEdit}
+                            autoCorrect={false} // disable autoCorrect on phone keyboard
+                            style={[styles.editEmoji,{borderColor: category.color}]}
+                        />              
                         <TextInput 
                             ref={inputRef}
                             // референция за .focus() къде да сложи cursor-a
                             value={newCategoryName}
                             onChangeText={setNewCategoryName}
+                            autoCorrect={false} // disable autoCorrect on phone keyboard
                             style={[styles.editName, { color: category.color, borderColor: category.color}]}
                         />
                         <TouchableOpacity onPress={handleSaveEditedCategory}>
@@ -179,15 +193,16 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
 
-    emojiEdit: {
+    editEmoji: {
         width: 48,
         height: 48,
-        borderRadius: 24,
+        borderRadius: 25,
         backgroundColor: "#fafafa",
         borderWidth: 1,
         alignItems: 'center',
-        justifyContent: 'center'
-        
+        justifyContent: 'center',
+        textAlign: 'center',
+        fontSize: 25,
     },
 
     editName: {
