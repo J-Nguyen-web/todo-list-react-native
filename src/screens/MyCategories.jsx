@@ -8,7 +8,7 @@ import categoriesGroup from "../util/categoriesGroup.js";
 import CardCategory from "../components/CardCategory.jsx";
 import CardCategoryOptions from "../components/CardCategoryOptions.jsx";
 
-export default function MySection() {
+export default function MyCategories() {
 
     const { categories } = useCategories();
     

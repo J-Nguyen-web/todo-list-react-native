@@ -2,7 +2,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import TabNavigator from "./TabNavigator.jsx";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const Stack = createStackNavigator()
+const Stack = createStackNavigator();
 
 export default function RootNavigator() {
     return (
