@@ -88,7 +88,7 @@ export default function CardCategoryOptions({category}) {
     }
 
     return (
-        <View style={[styles.cardContainer, {backgroundColor: category.background}]}>
+        <View style={[styles.cardContainer, {backgroundColor: category.background, borderWidth: 0.7, borderColor: category.color}]}>
                 {isEditing ? (
                     <KeyboardAvoidingView>
                     <View style={{flexDirection: 'row', gap: 14, alignItems: 'center'}}>

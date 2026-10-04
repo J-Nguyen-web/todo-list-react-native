@@ -5,7 +5,7 @@ import { CATEGORY_CONFIG } from "../constants/categories.js";
 import { Feather, FontAwesome6, MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
 
-export default function CardCategory({category,variant}) {
+export default function CardCategory({category, variant}) {
 
     const { tasks } = useTasks();
     const { categories, updateCategory, deleteCategory} = useCategories();
@@ -18,7 +18,7 @@ export default function CardCategory({category,variant}) {
     function handleRedirectCategory(){}
 
     return (
-        <View style={[styles.cardContainer, {backgroundColor: category.background}]}>
+        <View style={[styles.cardContainer, {backgroundColor: category.background, borderWidth: 0.7, borderColor: category.color}]}>
             <TouchableOpacity style={styles.category} onPress={handleRedirectCategory}>
                 <Text style={styles.icon}> {category.icon} </Text>
                 <Text style={[styles.categoryTitle, {color: category.color}]}> {category.name} </Text>
@@ -62,8 +62,8 @@ const variantStyles={
             // android (combines all above)
             elevation: 3        
         },
-        icon: {fontSize: 28},
-        categoryTitle: {fontSize: 18}
+        icon: {fontSize: 25},
+        categoryTitle: {fontSize: 16}
     },
 
     allTasksCategories: {
