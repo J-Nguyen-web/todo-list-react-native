@@ -12,6 +12,7 @@ import getCategories from "../services/categoryService.js";
 import CardTask from "../components/CardTask.jsx";
 import Heading from "../components/ui/Heading.jsx";
 import CardFavCategories from "../components/CardFavCategories.jsx";
+import { Directions, Gesture, GestureDetector } from "react-native-gesture-handler";
 
 const greeting = 'Good Morning' // todo changable depending on the hours of the day
 const username = 'Nguyen' // todo changable depending on the user.username
@@ -45,6 +46,17 @@ export default function HomeNavigator() {
         setCanScrollRight(maxOffset > 5 && offsetX < maxOffset - 5);
     }
 
+    const deleteGester = Gesture.Fling()
+        .direction(Directions.LEFT)
+        .onEnd((event) => {
+            console.log(event);
+            removeTask(task.id)
+        })
+        return (
+            <GestureDetector gesture={deleteGester}>
+                <CardTask task={item} categories={categories} />
+            </GestureDetector>
+        )
     return (
         <SafeAreaView 
             style={{flex: 1, backgroundColor: '#ffffff'}}
