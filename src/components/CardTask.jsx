@@ -3,8 +3,9 @@ import { StyleSheet, View, Text } from "react-native";
 import { CATEGORY_CONFIG } from "../constants/categories.js";
 import { useEffect, useState } from "react";
 import { useSQLiteContext } from "expo-sqlite";
+import Animated from "react-native-reanimated";
 
-export default function CardTask({task, categories}) {
+export default function CardTask({task, style, categories}) {
     if (!task || !categories) return null
 
     // console.log('TASK: ', task)
@@ -15,7 +16,7 @@ export default function CardTask({task, categories}) {
     // const Icon = categoryType.Icon
 
     return (    
-        <View style={[styles.cardContainer, { borderLeftColor: category?.color}]}>
+        <Animated.View style={[styles.cardContainer, style, { borderLeftColor: category?.color}]}>
 
             <View style={styles.leftPart}>
                 <Ionicons
@@ -43,7 +44,7 @@ export default function CardTask({task, categories}) {
                 <MaterialIcons name="drag-indicator" size={25} color='gray' />
             </View>
 
-        </View>
+        </Animated.View>
 
     );
 }

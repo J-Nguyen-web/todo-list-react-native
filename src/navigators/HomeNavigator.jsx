@@ -13,6 +13,9 @@ import CardTask from "../components/CardTask.jsx";
 import Heading from "../components/ui/Heading.jsx";
 import CardFavCategories from "../components/CardFavCategories.jsx";
 import { Directions, Gesture, GestureDetector } from "react-native-gesture-handler";
+import { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
+import { transform } from "lodash";
+import { scheduleOnRN } from "react-native-worklets";
 
 const greeting = 'Good Morning' // todo changable depending on the hours of the day
 const username = 'Nguyen' // todo changable depending on the user.username
@@ -31,7 +34,7 @@ export default function HomeNavigator() {
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
     
-    const { tasks } = useTasks();
+    const { tasks, removeTask } = useTasks();
     const { categories } = useCategories();
 
     const favCategories = categories.filter( category => category.favorite === 1)
@@ -45,18 +48,41 @@ export default function HomeNavigator() {
         setCanScrollLeft(offsetX > 5);
         setCanScrollRight(maxOffset > 5 && offsetX < maxOffset - 5);
     }
+    
+ // separate responsibility (добавя gester behaviour and posibility to construct it) so cardTask only render
+    const CardTaskWithGesture = ({
+        task,
+        categories,
+        removeTask,
+    }) => {
+        const positionHorizontal = useSharedValue(0); // 0 - начална точка ?
+        
+        const animatedStyle = useAnimatedStyle(() => ({
+            transform: [{ translateX: positionHorizontal.value}],
+        }));
 
-    const deleteGester = Gesture.Fling()
-        .direction(Directions.LEFT)
-        .onEnd((event) => {
-            console.log(event);
-            removeTask(task.id)
-        })
+        const deleteGester = Gesture.Pan()
+            // .direction(Directions.LEFT)
+            .onUpdate((event) => {
+                positionHorizontal.value = event.translationX; 
+            })
+            .onEnd((event) => {
+                console.log(event);
+
+                if(event.translationX < -100){
+                    scheduleOnRN(removeTask, (task.id)) 
+            //scheduleOnRN за да се изпълни JS code, докато сме в React-native (анимациите се извършват там)
+                return;
+                }
+                positionHorizontal.value = 0 // да се върне в началната си позиция в края (onEnd) на gesture-a кога се премине -100
+            })
         return (
             <GestureDetector gesture={deleteGester}>
-                <CardTask task={item} categories={categories} />
+                <CardTask task={task} style={animatedStyle} categories={categories}/>
             </GestureDetector>
-        )
+        )        
+    }
+
     return (
         <SafeAreaView 
             style={{flex: 1, backgroundColor: '#ffffff'}}
@@ -175,7 +201,7 @@ export default function HomeNavigator() {
 
                         <FlatList style={{flex: 1, gap: 6, backgroundColor: '#fff'}}
                             data={tasks}
-                            renderItem={({ item }) => <CardTask task={item} categories={categories} />}
+                            renderItem={({ item }) => <CardTaskWithGesture task={item} categories={categories} removeTask={removeTask} />}
                             keyExtractor={(item) => item.id}
                         />
                     </View>
