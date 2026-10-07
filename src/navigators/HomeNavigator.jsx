@@ -13,9 +13,10 @@ import CardTask from "../components/CardTask.jsx";
 import Heading from "../components/ui/Heading.jsx";
 import CardFavCategories from "../components/CardFavCategories.jsx";
 import { Directions, Gesture, GestureDetector } from "react-native-gesture-handler";
-import { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
+import { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { transform } from "lodash";
 import { scheduleOnRN } from "react-native-worklets";
+import * as Haptics from "expo-haptics";
 
 const greeting = 'Good Morning' // todo changable depending on the hours of the day
 const username = 'Nguyen' // todo changable depending on the user.username
@@ -56,28 +57,51 @@ export default function HomeNavigator() {
         removeTask,
     }) => {
         const positionHorizontal = useSharedValue(0); // 0 - начална точка ?
+        const positionVertical = useSharedValue(0); // 0 - начална точка ?
+        const scale = useSharedValue(1);
         
         const animatedStyle = useAnimatedStyle(() => ({
-            transform: [{ translateX: positionHorizontal.value}],
+            transform: [
+                { translateX: positionHorizontal.value },
+                { translateY: positionVertical.value },
+                { scale: scale.value } // за трансформация на целия елемент (в случая card)
+            ]
         }));
 
         const deleteGester = Gesture.Pan()
-            // .direction(Directions.LEFT)
+            .activeOffsetX(-20) // да се активира gesture-а при определена дистанция по xоризонтала
             .onUpdate((event) => {
                 positionHorizontal.value = event.translationX; 
             })
             .onEnd((event) => {
-                console.log(event);
-
                 if(event.translationX < -100){
                     scheduleOnRN(removeTask, (task.id)) 
-            //scheduleOnRN за да се изпълни JS code, докато сме в React-native (анимациите се извършват там)
-                return;
+                //scheduleOnRN e за да се изпълни JS code, докато сме в React-native (анимациите се извършват в него)
+                    return;
                 }
+
                 positionHorizontal.value = 0 // да се върне в началната си позиция в края (onEnd) на gesture-a кога се премине -100
+            });
+        
+        const reorderGester = Gesture.Pan()
+            .activateAfterLongPress(500) // активира gesture-a след задържане от половин секунда
+            .onStart(() => {
+                scheduleOnRN(Haptics.impactAsync); // selectionAsync - при активиране на gesture-a извибрирва (expo-haptic)
+                scale.value = withTiming(1.06)
             })
+            .onUpdate((event)=> {
+                positionVertical.value = event.translationY
+            })
+            .onEnd(() => {
+                positionVertical.value = 0;
+                scale.value = withTiming(1)
+            })
+
+        const combinedGesture = Gesture.Race(deleteGester, reorderGester);
+        // .Race - ще се изпълните този gesture който първо се активира от детектора (за това и му се подава)
+
         return (
-            <GestureDetector gesture={deleteGester}>
+            <GestureDetector gesture={combinedGesture}>
                 <CardTask task={task} style={animatedStyle} categories={categories}/>
             </GestureDetector>
         )        
