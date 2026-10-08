@@ -27,6 +27,23 @@ export function TaskProvider({ children }) {
         await loadTasks();
     }
 
+    const taskOrder = (taskId, indexNew) => {
+        setTasks((oldOrder) => {
+            const index = oldOrder.findIndex( task => task.id === taskId);
+            
+            if(index === -1) return oldOrder;
+
+            if(indexNew < 0 || indexNew >= oldOrder.length) return oldOrder;
+
+            const updatedTasksOrder = [
+                ...oldOrder.slice(0, index),
+                ...oldOrder.slice(index + 1),
+            ];
+
+            updatedTasksOrder.splice(indexNew, 0, oldOrder[index])
+        })
+    }
+
     async function removeTask(id) {
         await deleteTask(db, id)
         await loadTasks();

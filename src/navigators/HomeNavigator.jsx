@@ -31,6 +31,7 @@ const FADE_HEIGHT = 160; // fade starts 160 units before image ends
 export default function HomeNavigator() {
     
     const favListRef = useRef(null);
+    const CARD_HEIGHT = 100;
     // const [favCategories, setFavCategories] = useState(); // todo favCategories
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
@@ -53,8 +54,10 @@ export default function HomeNavigator() {
  // separate responsibility (добавя gester behaviour and posibility to construct it) so cardTask only render
     const CardTaskWithGesture = ({
         task,
+        index,
         categories,
         removeTask,
+        onReorded
     }) => {
         const positionHorizontal = useSharedValue(0); // 0 - начална точка ?
         const positionVertical = useSharedValue(0); // 0 - начална точка ?
@@ -84,13 +87,22 @@ export default function HomeNavigator() {
             });
         
         const reorderGester = Gesture.Pan()
-            .activateAfterLongPress(500) // активира gesture-a след задържане от половин секунда
+            .activateAfterLongPress(300) // активира gesture-a след задържане от половин секунда
             .onStart(() => {
                 scheduleOnRN(Haptics.impactAsync); // selectionAsync - при активиране на gesture-a извибрирва (expo-haptic)
                 scale.value = withTiming(1.06)
             })
             .onUpdate((event)=> {
-                positionVertical.value = event.translationY
+                positionVertical.value = event.translationY;
+
+                // промяна на индекса на елемента според нагоре или надолу по Y
+                if(event.translationY > CARD_HEIGHT) {
+                    scheduleOnRN(onReorded, task.id, index + 1);
+                    positionY.value -= CARD_HEIGHT;
+                } else if (event.translationY < -CARD_HEIGHT){
+                    scheduleOnRN(onReorded, task.id, index - 1);
+                    positionY.value += CARD_HEIGHT;
+                }
             })
             .onEnd(() => {
                 positionVertical.value = 0;
