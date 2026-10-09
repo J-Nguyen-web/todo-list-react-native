@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useSQLiteContext } from "expo-sqlite";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
 import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,6 +17,7 @@ import { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reani
 import { transform } from "lodash";
 import { scheduleOnRN } from "react-native-worklets";
 import * as Haptics from "expo-haptics";
+import { AnimatedView } from "react-native-reanimated/lib/typescript/component/View.js";
 
 const greeting = 'Good Morning' // todo changable depending on the hours of the day
 const username = 'Nguyen' // todo changable depending on the user.username
@@ -63,13 +64,30 @@ export default function HomeNavigator() {
         const positionVertical = useSharedValue(0); // 0 - начална точка ?
         const scale = useSharedValue(1);
         
-        const animatedStyle = useAnimatedStyle(() => ({
-            transform: [
-                { translateX: positionHorizontal.value },
-                { translateY: positionVertical.value },
-                { scale: scale.value } // за трансформация на целия елемент (в случая card)
-            ]
-        }));
+        const animatedStyle = useAnimatedStyle(() => {
+            const isSelected = scale.value > 1
+            
+            return {
+                transform: [
+                    { translateX: positionHorizontal.value },
+                    { translateY: positionVertical.value },
+                    { scale: scale.value } // за трансформация на целия елемент (в случая card)
+                ],
+                zIndex: isSelected ? 1 : 0, // за да минава пред другите елементи когато се провлачва (zIndex става 1 по default е 0)
+            }
+        });
+        
+        const binOpacity = useAnimatedStyle (() => {
+            const opacity = (-positionHorizontal.value -50) / 150; 
+            // -50 е като trash hold след който ще се активира увеличаването на opacity-то ще започне да се увеличава
+            //  (150 е като скорост за всеки пиксел (като при 100 след 100 пиксела ще е 100% което е доста бързо))
+
+            return {
+                opacity: Math.min(Math.max(opacity, 0), 1), // clamping - keep valid value range
+                // Math.max(opacity, 0) - Returns the max of two values( prevent from going under 0, bcoz every time less than 0 will return zero)
+                // Math.min((result),1) - Return smaller of two values - prevent from exceeding 1 (higeher than 1 will return 1)
+            }
+        })
 
         const deleteGester = Gesture.Pan()
             .activeOffsetX(-20) // да се активира gesture-а при определена дистанция по xоризонтала
@@ -114,7 +132,12 @@ export default function HomeNavigator() {
 
         return (
             <GestureDetector gesture={combinedGesture}>
-                <CardTask task={task} style={animatedStyle} categories={categories}/>
+                <View>
+                    <CardTask task={task} style={animatedStyle} categories={categories}/>
+                    <AnimatedView style={[styles.deleteBtnAnimated]}>
+                        <Ionicons name="trash-outline" size={25} color="#ff0000" />
+                    </AnimatedView>
+                </View>
             </GestureDetector>
         )        
     }
@@ -359,4 +382,16 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff'
 
     },
+
+    deleteBtnAnimated: {
+        position: 'absolute',
+        zIndex: -1,
+        right: 20,
+        top: 15,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        borderRadius: 20,
+        padding: 8,
+    }
 })
