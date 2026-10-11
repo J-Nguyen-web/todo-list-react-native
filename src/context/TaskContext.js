@@ -27,20 +27,22 @@ export function TaskProvider({ children }) {
         await loadTasks();
     }
 
-    const taskOrder = (taskId, indexNew) => {
+    const tasksReorder = (taskId, indexNew) => {
         setTasks((oldOrder) => {
-            const index = oldOrder.findIndex( task => task.id === taskId);
+            const indexOld = oldOrder.findIndex( task => task.id === taskId);
             
-            if(index === -1) return oldOrder;
+            if(indexOld === -1) return oldOrder;
 
             if(indexNew < 0 || indexNew >= oldOrder.length) return oldOrder;
 
-            const updatedTasksOrder = [
-                ...oldOrder.slice(0, index),
-                ...oldOrder.slice(index + 1),
-            ];
+            const updatedTasksOrder = [...oldOrder];
+            const [movedTask] = updatedTasksOrder.splice(indexOld, 1);
+                // ...oldOrder.slice(0, index),
+                // ...oldOrder.slice(index + 1),
 
-            updatedTasksOrder.splice(indexNew, 0, oldOrder[index])
+            updatedTasksOrder.splice(indexNew, 0, movedTask);
+
+            return updatedTasksOrder;
         })
     }
 
@@ -50,7 +52,7 @@ export function TaskProvider({ children }) {
     }
 
     return (
-        <TaskContext.Provider  value = {{tasks, createTask, updateTask, removeTask}}>
+        <TaskContext.Provider  value = {{tasks, createTask, updateTask, tasksReorder, removeTask}}>
             { children }
         </TaskContext.Provider>
     )

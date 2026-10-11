@@ -1,22 +1,13 @@
 import { Entypo, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet, View, Text } from "react-native";
-import { CATEGORY_CONFIG } from "../constants/categories.js";
-import { useEffect, useState } from "react";
-import { useSQLiteContext } from "expo-sqlite";
-import Animated from "react-native-reanimated";
 
-export default function CardTask({task, style, categories}) {
+export default function CardTask({task, categories}) {
     if (!task || !categories) return null
 
-    // console.log('TASK: ', task)
-    // console.log('CATEGORIES: ' ,categories)
     const category = categories.find( item => Number(item.id) === Number(task.categoryId) )
 
-    // const categoryType = CATEGORY_CONFIG[category_id]
-    // const Icon = categoryType.Icon
-
     return (    
-        <Animated.View style={[styles.cardContainer, style, { borderLeftColor: category?.color}]}>
+        <View style={[styles.cardContainer, { borderLeftColor: category?.color}]}>
 
             <View style={styles.leftPart}>
                 <Ionicons
@@ -25,11 +16,6 @@ export default function CardTask({task, style, categories}) {
                     color={task.completed ? "#50a353" : "#999"}
                 />
                 <View style={styles.icon}>
-                    {/* <Icon
-                        name={categoryType.icon}
-                        size={categoryType.size}
-                        color={categoryType.color}
-                    />                     */}
                     <Text style={{fontSize:32}}>{category?.icon}</Text>
                 </View>
 
@@ -43,9 +29,7 @@ export default function CardTask({task, style, categories}) {
                 <Entypo name="chevron-small-down" size={25} color='gray' />
                 <MaterialIcons name="drag-indicator" size={25} color='gray' />
             </View>
-
-        </Animated.View>
-
+        </View>
     );
 }
 

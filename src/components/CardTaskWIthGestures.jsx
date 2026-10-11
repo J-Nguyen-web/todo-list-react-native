@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Alert, View, StyleSheet } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import Animated, {useAnimatedStyle, useSharedValue, withTiming} from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import * as Haptics from "expo-haptics"
@@ -10,13 +9,14 @@ import CardTask from "./CardTask.jsx";
     const CARD_HEIGHT = 100;
 
  // separate responsibility (добавя gester behaviour and posibility to construct it) so cardTask only render
-    const CardTaskWithGesture = ({
+    export default function CardTaskWithGestures({
         task,
         index,
+        itemCount,
         categories,
         removeTask,
         onReorder   
-    }) => {
+    }) {
         const positionHorizontal = useSharedValue(0); // 0 - начална точка ?
         const positionVertical = useSharedValue(0); // 0 - начална точка ?
         const scale = useSharedValue(1);
@@ -48,7 +48,7 @@ import CardTask from "./CardTask.jsx";
                     { translateY: positionVertical.value },
                     { scale: scale.value } // за трансформация на целия елемент (в случая card)
                 ],
-                zIndex: isSelected ? 1 : 0, // за да минава пред другите елементи когато се провлачва (zIndex става 1 по default е 0)
+                zIndex: scale.value > 1 ? 1 : 0, // за да минава пред другите елементи когато се провлачва (zIndex става 1 по default е 0)
             }
         });
         
@@ -69,7 +69,6 @@ import CardTask from "./CardTask.jsx";
 
         const deleteGester = Gesture.Pan()
             .activeOffsetX([-20, 20]) // да се активира gesture-а при определена дистанция по xоризонтала
-            .failOffsetX([-15, 15])
             .onUpdate((event) => {
                 positionHorizontal.value = Math.min(event.translationX, 0); // only allow card move to the left
             })
@@ -101,8 +100,8 @@ import CardTask from "./CardTask.jsx";
                 //     positionVertical.value += CARD_HEIGHT;
                 // }
             })
-            .onEnd(() => {
-                const offset = Math.round(event.tranlsateY / CARD_HEIGHT)
+            .onEnd((event) => {
+                const offset = Math.round(event.translationY / CARD_HEIGHT)
                 const targetIndex = Math.max(
                     0,
                     Math.min(itemCount -1, index + offset)
@@ -126,7 +125,7 @@ import CardTask from "./CardTask.jsx";
         return (
             <GestureDetector gesture={combinedGesture}>
                 <Animated.View style={[styles.container, animatedStyle]}>
-                    <CardTask task={task} style={animatedStyle} categories={categories}/>
+                    <CardTask task={task} categories={categories}/>
                     <Animated.View
                         pointerEvents="none"
                         style={[styles.deleteBtnAnimated, binOpacity]}>

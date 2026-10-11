@@ -2,22 +2,17 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useSQLiteContext } from "expo-sqlite";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
-import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTasks } from "../context/TaskContext.js";
 import { useCategories } from "../context/CategoryContext.js";
 import categoriesGroup from "../util/categoriesGroup.js";
 import CardCategory from "../components/CardCategory.jsx";
 import getCategories from "../services/categoryService.js";
-import CardTask from "../components/CardTask.jsx";
 import Heading from "../components/ui/Heading.jsx";
 import CardFavCategories from "../components/CardFavCategories.jsx";
-import { Directions, Gesture, GestureDetector } from "react-native-gesture-handler";
-import { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
-import { transform } from "lodash";
-import { scheduleOnRN } from "react-native-worklets";
-import * as Haptics from "expo-haptics";
-import { AnimatedView } from "react-native-reanimated/lib/typescript/component/View.js";
+import CardTaskWithGestures from "../components/CardTaskWithGestures.jsx"
+
 
 const greeting = 'Good Morning' // todo changable depending on the hours of the day
 const username = 'Nguyen' // todo changable depending on the user.username
@@ -32,12 +27,11 @@ const FADE_HEIGHT = 160; // fade starts 160 units before image ends
 export default function HomeNavigator() {
     
     const favListRef = useRef(null);
-    const CARD_HEIGHT = 100;
     // const [favCategories, setFavCategories] = useState(); // todo favCategories
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
     
-    const { tasks, removeTask } = useTasks();
+    const { tasks, tasksReorder, removeTask } = useTasks();
     const { categories } = useCategories();
 
     const favCategories = categories.filter( category => category.favorite === 1)
@@ -50,96 +44,6 @@ export default function HomeNavigator() {
 
         setCanScrollLeft(offsetX > 5);
         setCanScrollRight(maxOffset > 5 && offsetX < maxOffset - 5);
-    }
-    
- // separate responsibility (добавя gester behaviour and posibility to construct it) so cardTask only render
-    const CardTaskWithGesture = ({
-        task,
-        index,
-        categories,
-        removeTask,
-        onReorded
-    }) => {
-        const positionHorizontal = useSharedValue(0); // 0 - начална точка ?
-        const positionVertical = useSharedValue(0); // 0 - начална точка ?
-        const scale = useSharedValue(1);
-        
-        const animatedStyle = useAnimatedStyle(() => {
-            const isSelected = scale.value > 1
-            
-            return {
-                transform: [
-                    { translateX: positionHorizontal.value },
-                    { translateY: positionVertical.value },
-                    { scale: scale.value } // за трансформация на целия елемент (в случая card)
-                ],
-                zIndex: isSelected ? 1 : 0, // за да минава пред другите елементи когато се провлачва (zIndex става 1 по default е 0)
-            }
-        });
-        
-        const binOpacity = useAnimatedStyle (() => {
-            const opacity = (-positionHorizontal.value -50) / 150; 
-            // -50 е като trash hold след който ще се активира увеличаването на opacity-то ще започне да се увеличава
-            //  (150 е като скорост за всеки пиксел (като при 100 след 100 пиксела ще е 100% което е доста бързо))
-
-            return {
-                opacity: Math.min(Math.max(opacity, 0), 1), // clamping - keep valid value range
-                // Math.max(opacity, 0) - Returns the max of two values( prevent from going under 0, bcoz every time less than 0 will return zero)
-                // Math.min((result),1) - Return smaller of two values - prevent from exceeding 1 (higeher than 1 will return 1)
-            }
-        })
-
-        const deleteGester = Gesture.Pan()
-            .activeOffsetX(-20) // да се активира gesture-а при определена дистанция по xоризонтала
-            .onUpdate((event) => {
-                positionHorizontal.value = event.translationX; 
-            })
-            .onEnd((event) => {
-                if(event.translationX < -100){
-                    scheduleOnRN(removeTask, (task.id)) 
-                //scheduleOnRN e за да се изпълни JS code, докато сме в React-native (анимациите се извършват в него)
-                    return;
-                }
-
-                positionHorizontal.value = 0 // да се върне в началната си позиция в края (onEnd) на gesture-a кога се премине -100
-            });
-        
-        const reorderGester = Gesture.Pan()
-            .activateAfterLongPress(300) // активира gesture-a след задържане от половин секунда
-            .onStart(() => {
-                scheduleOnRN(Haptics.impactAsync); // selectionAsync - при активиране на gesture-a извибрирва (expo-haptic)
-                scale.value = withTiming(1.06)
-            })
-            .onUpdate((event)=> {
-                positionVertical.value = event.translationY;
-
-                // промяна на индекса на елемента според нагоре или надолу по Y
-                if(event.translationY > CARD_HEIGHT) {
-                    scheduleOnRN(onReorded, task.id, index + 1);
-                    positionY.value -= CARD_HEIGHT;
-                } else if (event.translationY < -CARD_HEIGHT){
-                    scheduleOnRN(onReorded, task.id, index - 1);
-                    positionY.value += CARD_HEIGHT;
-                }
-            })
-            .onEnd(() => {
-                positionVertical.value = 0;
-                scale.value = withTiming(1)
-            })
-
-        const combinedGesture = Gesture.Race(deleteGester, reorderGester);
-        // .Race - ще се изпълните този gesture който първо се активира от детектора (за това и му се подава)
-
-        return (
-            <GestureDetector gesture={combinedGesture}>
-                <View>
-                    <CardTask task={task} style={animatedStyle} categories={categories}/>
-                    <AnimatedView style={[styles.deleteBtnAnimated]}>
-                        <Ionicons name="trash-outline" size={25} color="#ff0000" />
-                    </AnimatedView>
-                </View>
-            </GestureDetector>
-        )        
     }
 
     return (
@@ -260,7 +164,16 @@ export default function HomeNavigator() {
 
                         <FlatList style={{flex: 1, gap: 6, backgroundColor: '#fff'}}
                             data={tasks}
-                            renderItem={({ item }) => <CardTaskWithGesture task={item} categories={categories} removeTask={removeTask} />}
+                            renderItem={({ item, index }) => (
+                                <CardTaskWithGestures
+                                task={item}
+                                index={index}
+                                itemCount={tasks.length}
+                                categories={categories}
+                                removeTask={removeTask}
+                                onReorder={tasksReorder}
+                                />
+                            )}
                             keyExtractor={(item) => item.id}
                         />
                     </View>
@@ -382,16 +295,4 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff'
 
     },
-
-    deleteBtnAnimated: {
-        position: 'absolute',
-        zIndex: -1,
-        right: 20,
-        top: 15,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        borderRadius: 20,
-        padding: 8,
-    }
 })
