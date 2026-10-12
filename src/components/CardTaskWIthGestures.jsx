@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Alert, View, StyleSheet } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, {useAnimatedStyle, useSharedValue, withTiming} from "react-native-reanimated";
+import Animated, {useAnimatedStyle, useSharedValue, withTiming, LinearTransition} from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import * as Haptics from "expo-haptics"
 import CardTask from "./CardTask.jsx";
@@ -17,8 +17,10 @@ import CardTask from "./CardTask.jsx";
         removeTask,
         onReorder   
     }) {
-        const positionHorizontal = useSharedValue(0); // 0 - начална точка ?
-        const positionVertical = useSharedValue(0); // 0 - начална точка ?
+        const positionHorizontal = useSharedValue(0);
+        const positionVertical = useSharedValue(0);
+        const currentIndex = useSharedValue(index);
+        const dragOffsetY = useSharedValue(0);
         const scale = useSharedValue(1);
 
         function confirmDeleteTask (taskId) {
@@ -85,12 +87,33 @@ import CardTask from "./CardTask.jsx";
         const reorderGester = Gesture.Pan()
             .activateAfterLongPress(300) // активира gesture-a след задържане от половин секунда
             .onStart(() => {
+                currentIndex.value = index;
+                dragOffsetY.value = 0;
                 scheduleOnRN(Haptics.impactAsync); // selectionAsync - при активиране на gesture-a извибрирва (expo-haptic)
                 scale.value = withTiming(1.06)
             })
             .onUpdate((event)=> {
-                positionVertical.value = event.translationY;
+                const effectiveY = event.translationY - dragOffsetY.value;
 
+                if (
+                    effectiveY > CARD_HEIGHT * 0.6 &&
+                    currentIndex.value < itemCount - 1
+                ) {
+                    currentIndex.value += 1;
+                    dragOffsetY.value += CARD_HEIGHT;
+                    positionVertical.value = event.translationY - dragOffsetY.value;
+                    scheduleOnRN(onReorder, task.id, currentIndex.value)
+                } else if (
+                    effectiveY < -CARD_HEIGHT * 0.6 &&
+                    currentIndex.value > 0
+                ) {
+                    currentIndex.value -=1;
+                    dragOffsetY.value -= CARD_HEIGHT;
+
+                    positionVertical.value = event.translationY - dragOffsetY.value;
+                    
+                    scheduleOnRN(onReorder, task.id, currentIndex.value)
+                }
                 // промяна на индекса на елемента според нагоре или надолу по Y
                 // if(event.translationY > CARD_HEIGHT) {
                 //     scheduleOnRN(onReorder, task.id, index + 1);
@@ -101,22 +124,23 @@ import CardTask from "./CardTask.jsx";
                 // }
             })
             .onEnd((event) => {
-                const offset = Math.round(event.translationY / CARD_HEIGHT)
-                const targetIndex = Math.max(
-                    0,
-                    Math.min(itemCount -1, index + offset)
-                );
+                // const offset = Math.round(event.translationY / CARD_HEIGHT)
+                // const targetIndex = Math.max(
+                //     0,
+                //     Math.min(itemCount -1, index + offset)
+                // );
 
-                if(targetIndex !== index){
-                    scheduleOnRN(onReorder, task.id, targetIndex)
-                }
+                // if(targetIndex !== index){
+                //     scheduleOnRN(onReorder, task.id, targetIndex)
+                // }
 
-                positionVertical.value = 0;
+                positionVertical.value = withTiming(0);
                 scale.value = withTiming(1)
             })
             .onFinalize(() => {
                 positionVertical.value = 0;
-                scale.value = withTiming(1)                
+                scale.value = withTiming(1);
+                dragOffsetY.value = 0              
             })
 
         const combinedGesture = Gesture.Race(deleteGester, reorderGester);
@@ -124,8 +148,12 @@ import CardTask from "./CardTask.jsx";
 
         return (
             <GestureDetector gesture={combinedGesture}>
-                <Animated.View style={[styles.container, animatedStyle]}>
+                <Animated.View
+                    layout={LinearTransition.duration(380)}
+                    style={[styles.container, animatedStyle]}
+                >
                     <CardTask task={task} categories={categories}/>
+                    
                     <Animated.View
                         pointerEvents="none"
                         style={[styles.deleteBtnAnimated, binOpacity]}>
