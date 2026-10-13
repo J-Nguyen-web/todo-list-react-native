@@ -5,8 +5,9 @@ import Animated, {useAnimatedStyle, useSharedValue, withTiming, LinearTransition
 import { scheduleOnRN } from "react-native-worklets";
 import * as Haptics from "expo-haptics"
 import CardTask from "./CardTask.jsx";
+import { useState } from "react";
 
-    const CARD_HEIGHT = 100;
+    // const CARD_HEIGHT = 100;
 
  // separate responsibility (добавя gester behaviour and posibility to construct it) so cardTask only render
     export default function CardTaskWithGestures({
@@ -17,6 +18,12 @@ import CardTask from "./CardTask.jsx";
         removeTask,
         onReorder   
     }) {
+        const [rowHeight, setRowHeight] = useState(0); // rowHeight will be detected from onLayout in Animated.View
+        const [isDragging, setIsDragging] = useState(false);
+        
+        const ROW_GAP = 6;
+        const rowStep = rowHeight + ROW_GAP;
+        
         const positionHorizontal = useSharedValue(0);
         const positionVertical = useSharedValue(0);
         const currentIndex = useSharedValue(index);
@@ -89,26 +96,30 @@ import CardTask from "./CardTask.jsx";
             .onStart(() => {
                 currentIndex.value = index;
                 dragOffsetY.value = 0;
+
+                scheduleOnRN(setIsDragging, true)
                 scheduleOnRN(Haptics.impactAsync); // selectionAsync - при активиране на gesture-a извибрирва (expo-haptic)
                 scale.value = withTiming(1.06)
             })
             .onUpdate((event)=> {
-                const effectiveY = event.translationY - dragOffsetY.value;
+                
+                let effectiveY = event.translationY - dragOffsetY.value;
+                positionVertical.value = effectiveY; // card move countinuesly with the finger
 
                 if (
-                    effectiveY > CARD_HEIGHT * 0.6 &&
+                    effectiveY > rowStep * 0.6 &&
                     currentIndex.value < itemCount - 1
                 ) {
                     currentIndex.value += 1;
-                    dragOffsetY.value += CARD_HEIGHT;
+                    dragOffsetY.value += rowStep;
                     positionVertical.value = event.translationY - dragOffsetY.value;
                     scheduleOnRN(onReorder, task.id, currentIndex.value)
                 } else if (
-                    effectiveY < -CARD_HEIGHT * 0.6 &&
+                    effectiveY < -rowStep * 0.6 &&
                     currentIndex.value > 0
                 ) {
-                    currentIndex.value -=1;
-                    dragOffsetY.value -= CARD_HEIGHT;
+                    currentIndex.value -= 1;
+                    dragOffsetY.value -= rowStep;
 
                     positionVertical.value = event.translationY - dragOffsetY.value;
                     
@@ -123,7 +134,7 @@ import CardTask from "./CardTask.jsx";
                 //     positionVertical.value += CARD_HEIGHT;
                 // }
             })
-            .onEnd((event) => {
+            // .onEnd((event) => {
                 // const offset = Math.round(event.translationY / CARD_HEIGHT)
                 // const targetIndex = Math.max(
                 //     0,
@@ -134,13 +145,14 @@ import CardTask from "./CardTask.jsx";
                 //     scheduleOnRN(onReorder, task.id, targetIndex)
                 // }
 
-                positionVertical.value = withTiming(0);
-                scale.value = withTiming(1)
-            })
+            //     positionVertical.value = withTiming(0);
+            //     scale.value = withTiming(1)
+            // })
             .onFinalize(() => {
                 positionVertical.value = 0;
                 scale.value = withTiming(1);
-                dragOffsetY.value = 0              
+                dragOffsetY.value = 0
+                scheduleOnRN(setIsDragging, false)
             })
 
         const combinedGesture = Gesture.Race(deleteGester, reorderGester);
@@ -149,7 +161,10 @@ import CardTask from "./CardTask.jsx";
         return (
             <GestureDetector gesture={combinedGesture}>
                 <Animated.View
-                    layout={LinearTransition.duration(380)}
+                    onLayout={(event) => {
+                        setRowHeight(event.nativeEvent.layout.height)
+                    }}
+                    layout={ isDragging ? undefined : LinearTransition.duration(380) }
                     style={[styles.container, animatedStyle]}
                 >
                     <CardTask task={task} categories={categories}/>

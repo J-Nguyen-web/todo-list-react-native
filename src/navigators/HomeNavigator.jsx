@@ -162,7 +162,9 @@ export default function HomeNavigator() {
                             <Heading>Edit</Heading>
                         </View>
 
-                        <FlatList style={{flex: 1, gap: 6, backgroundColor: '#fff'}}
+                        <FlatList 
+                            style={{flex: 1, backgroundColor: '#fff'}}
+                            contentContainerStyle={{ gap: 6 }}
                             data={tasks}
                             renderItem={({ item, index }) => (
                                 <CardTaskWithGestures
