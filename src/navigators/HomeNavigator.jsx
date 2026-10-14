@@ -1,7 +1,7 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useSQLiteContext } from "expo-sqlite";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useEffect, useRef, useState } from "react";
+import { useMemo, useEffect, useRef, useState } from "react";
 import { Alert, Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTasks } from "../context/TaskContext.js";
@@ -12,6 +12,8 @@ import getCategories from "../services/categoryService.js";
 import Heading from "../components/ui/Heading.jsx";
 import CardFavCategories from "../components/CardFavCategories.jsx";
 import CardTaskWithGestures from "../components/CardTaskWithGestures.jsx"
+import Animated, {useAnimatedStyle, useSharedValue} from "react-native-reanimated"
+import CardTask from "../components/CardTask.jsx";
 
 
 const greeting = 'Good Morning' // todo changable depending on the hours of the day
@@ -26,14 +28,111 @@ const FADE_HEIGHT = 160; // fade starts 160 units before image ends
 
 export default function HomeNavigator() {
     
+    const ROW_GAP = 6;
     const favListRef = useRef(null);
     // const [favCategories, setFavCategories] = useState(); // todo favCategories
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
-    
+    const [rowHeight, setRowHeight] = useState({}); // rowHeight will be detected from onLayout in Animated.View
+    const [activeTaskId, setActiveTaskId] = useState(null);
     const { tasks, tasksReorder, removeTask } = useTasks();
     const { categories } = useCategories();
 
+    const scrollOffsetRef = useRef(0);
+    const tasksRef = useRef(tasks);
+    const positionsRef = useRef({});
+    const activeTaskIdRef = useRef(null);
+
+    const dragY = useSharedValue(0);
+    const dragScale = useSharedValue(1);
+    const scrollY = useSharedValue(0);
+
+    tasksRef.current = tasks;
+
+    const rowPosition = useMemo(() => {
+        let top = 0
+        const position = {};
+
+        for (const task of tasks) {
+            const height = rowHeight[task.id] ?? 100;
+
+            position[task.id] = {
+                top,
+                height,
+                center: top + height /2
+            };
+
+            top += height +ROW_GAP;
+        }
+        return position;
+    },[tasks, rowHeight])
+
+    positionsRef.current = rowPosition;
+
+    const activeTask = tasks.find(
+        (task) => task.id === activeTaskId
+    );
+
+    const overlayStyle = useAnimatedStyle(() => ({
+        position: "absolute",
+        top: dragY.value,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        elevation: 10,
+        transform: [{ scale: dragScale.value}],
+    }));
+
+    function handleRowLayout(taskId, height) {
+        setRowHeight((previous) => {
+            if (previous[taskId] === height) {
+                return previous;
+            }
+
+            return {...previous, [taskId]: height}
+        });
+    }
+
+    function handleDragStart(taskId) {
+        activeTaskIdRef.current = taskId;
+        setActiveTaskId(taskId);
+    }
+
+    function handleDragMove(taskId, draggedCenterY) {
+        const currentTasks = tasksRef.current;
+        const positions = positionsRef.current;
+
+        if ( activeTaskIdRef.current !== taskId) {
+            return;
+        }
+        
+        const otherTasks = currentTasks.filter(
+            (task) => task.id !== taskId
+        )
+
+        let targetIndex = 0;
+
+        for ( const task of otherTasks) {
+            const position = positions[task.id];
+
+            if (position && draggedCenterY > position.center) {
+                targetIndex +=1;
+            }
+        }
+        
+        const currentIndex = currentTasks.findIndex(
+            (task) => task.id === taskId
+        )
+
+        if (targetIndex !== currentIndex) {
+            tasksReorder(taskId, targetIndex)
+        }
+    }
+
+    function handleDragEnd() {
+        activeTaskIdRef.current = null;
+        setActiveTaskId(null)
+    }
     const favCategories = categories.filter( category => category.favorite === 1)
 
     const handleFavScroll = (event) => {
@@ -161,11 +260,17 @@ export default function HomeNavigator() {
                             <Heading>Daily Tasks</Heading>
                             <Heading>Edit</Heading>
                         </View>
-
+                    <View style={{flex: 1, position: "relative"}}>
                         <FlatList 
                             style={{flex: 1, backgroundColor: '#fff'}}
                             contentContainerStyle={{ gap: 6 }}
                             data={tasks}
+                            scrollEnabled={activeTaskId === null}
+                            onScroll={(event) => {
+                                scrollY.value = event.nativeEvent.contentOffset.y;
+                            }}
+                            scrollEventThrottle={16}
+                            keyExtractor={(item) => String(item.id)}
                             renderItem={({ item, index }) => (
                                 <CardTaskWithGestures
                                 task={item}
@@ -174,10 +279,32 @@ export default function HomeNavigator() {
                                 categories={categories}
                                 removeTask={removeTask}
                                 onReorder={tasksReorder}
+                                rowTop={rowPosition[item.id]?.top ?? 0}
+                                rowHeight={rowPosition[item.id]?.height ?? 100}
+                                scrollY={scrollY}
+                                isActive={item.id === activeTaskId}
+                                dragY={dragY}
+                                dragScale={dragScale}
+                                onRowLayout={handleRowLayout}
+                                onDragStart={handleDragStart}
+                                onDragMove={handleDragMove}
+                                onDragEnd={handleDragEnd}
                                 />
                             )}
-                            keyExtractor={(item) => item.id}
                         />
+
+                        {activeTask && (
+                            <Animated.View
+                                pointerEvents="none"
+                                style={overlayStyle}
+                            >
+                                <CardTask
+                                    task={activeTask}
+                                    categories={categories}
+                                />
+                            </Animated.View>
+                        )}
+                    </View>
                     </View>
                 </View>
             </View>

@@ -5,7 +5,6 @@ import Animated, {useAnimatedStyle, useSharedValue, withTiming, LinearTransition
 import { scheduleOnRN } from "react-native-worklets";
 import * as Haptics from "expo-haptics"
 import CardTask from "./CardTask.jsx";
-import { useState } from "react";
 
     // const CARD_HEIGHT = 100;
 
@@ -16,19 +15,30 @@ import { useState } from "react";
         itemCount,
         categories,
         removeTask,
-        onReorder   
+        onReorder,
+        rowTop,
+        rowHeight,
+        scrollY,
+        isActive,
+        dragY,
+        dragScale,
+        onRowLayout,
+        onDragStart,
+        onDragMove,
+        onDragEnd,
     }) {
-        const [rowHeight, setRowHeight] = useState(0); // rowHeight will be detected from onLayout in Animated.View
-        const [isDragging, setIsDragging] = useState(false);
-        
-        const ROW_GAP = 6;
-        const rowStep = rowHeight + ROW_GAP;
+        // const [rowHeight, setRowHeight] = useState(0); // rowHeight will be detected from onLayout in Animated.View
+        // const [isDragging, setIsDragging] = useState(false);
+        const startY = useSharedValue(0);
+        // const position = useSharedValue(0);
+        // const rowStep = rowHeight + ROW_GAP;
         
         const positionHorizontal = useSharedValue(0);
-        const positionVertical = useSharedValue(0);
-        const currentIndex = useSharedValue(index);
-        const dragOffsetY = useSharedValue(0);
-        const scale = useSharedValue(1);
+        // const positionVertical = useSharedValue(0);
+        // const currentIndex = useSharedValue(index);
+        // const startIndex = useSharedValue(index);
+        // const dragOffsetY = useSharedValue(0); // layout changes compensator
+        // const scale = useSharedValue(1);
 
         function confirmDeleteTask (taskId) {
                 Alert.alert(
@@ -48,18 +58,20 @@ import { useState } from "react";
                 )
             }
                 
-        const animatedStyle = useAnimatedStyle(() => {
+        const animatedStyle = useAnimatedStyle(() => ({
+            transform: [
+                { translateX: positionHorizontal.value},
+            ]
             // const isSelected = scale.value > 1
             
-            return {
-                transform: [
-                    { translateX: positionHorizontal.value },
-                    { translateY: positionVertical.value },
-                    { scale: scale.value } // за трансформация на целия елемент (в случая card)
-                ],
-                zIndex: scale.value > 1 ? 1 : 0, // за да минава пред другите елементи когато се провлачва (zIndex става 1 по default е 0)
-            }
-        });
+            // return {
+            //     transform: [
+            //         { translateY: positionVertical.value },
+            //         { scale: scale.value } // за трансформация на целия елемент (в случая card)
+            //     ],
+            //     zIndex: scale.value > 1 ? 1 : 0, // за да минава пред другите елементи когато се провлачва (zIndex става 1 по default е 0)
+            // }
+        }));
         
         const binOpacity = useAnimatedStyle (() => {
             const opacity = (-positionHorizontal.value -30) / 150; 
@@ -94,37 +106,51 @@ import { useState } from "react";
         const reorderGester = Gesture.Pan()
             .activateAfterLongPress(300) // активира gesture-a след задържане от половин секунда
             .onStart(() => {
-                currentIndex.value = index;
-                dragOffsetY.value = 0;
+                // currentIndex.value = index;
+                // startIndex.value = index;
+                // dragOffsetY.value = 0;
+                startY.value = rowTop - scrollY.value;
+                dragY.value = startY.value;
+                dragScale.value = withTiming(1.06)
 
-                scheduleOnRN(setIsDragging, true)
+                // scheduleOnRN(setIsDragging, true)
+                scheduleOnRN(onDragStart, task.id)
                 scheduleOnRN(Haptics.impactAsync); // selectionAsync - при активиране на gesture-a извибрирва (expo-haptic)
-                scale.value = withTiming(1.06)
+                // scale.value = withTiming(1.06)
             })
             .onUpdate((event)=> {
-                
-                let effectiveY = event.translationY - dragOffsetY.value;
-                positionVertical.value = effectiveY; // card move countinuesly with the finger
+                // the overlay follows the finger continuesly
+                dragY.value = startY.value + event.translationY;
 
-                if (
-                    effectiveY > rowStep * 0.6 &&
-                    currentIndex.value < itemCount - 1
-                ) {
-                    currentIndex.value += 1;
-                    dragOffsetY.value += rowStep;
-                    positionVertical.value = event.translationY - dragOffsetY.value;
-                    scheduleOnRN(onReorder, task.id, currentIndex.value)
-                } else if (
-                    effectiveY < -rowStep * 0.6 &&
-                    currentIndex.value > 0
-                ) {
-                    currentIndex.value -= 1;
-                    dragOffsetY.value -= rowStep;
+                // Convert its center to list-content coordinates.
+                const draggedCenterY = dragY.value + scrollY.value + rowHeight / 2;
 
-                    positionVertical.value = event.translationY - dragOffsetY.value;
+                // The JS handler changes the order only when the target changes
+                scheduleOnRN(onDragMove, task.id, draggedCenterY)
+                // const crossedRows = currentIndex.value - startIndex.value
+                // const layoutOffset = crossedRows * rowStep;
+                // let effectiveY = event.translationY - layoutOffset;
+                // positionVertical.value = event.translationY - layoutOffset; // card move countinuesly with the finger
+                // let effectiveY = event.translationY - dragOffsetY.value;
+
+                // if (
+                //     effectiveY > rowStep * 0.6 &&
+                //     currentIndex.value < itemCount - 1
+                // ) {
+                //     currentIndex.value += 1;
+                //     // dragOffsetY.value += rowStep;
+                //     // positionVertical.value = event.translationY - dragOffsetY.value;
+                //     scheduleOnRN(onReorder, task.id, currentIndex.value)
+                // } else if (
+                //     effectiveY < -rowStep * 0.6 &&
+                //     currentIndex.value > 0
+                // ) {
+                //     currentIndex.value -= 1;
+                //     // dragOffsetY.value -= rowStep;
+                //     // positionVertical.value = event.translationY - dragOffsetY.value;
                     
-                    scheduleOnRN(onReorder, task.id, currentIndex.value)
-                }
+                //     scheduleOnRN(onReorder, task.id, currentIndex.value)
+                // }
                 // промяна на индекса на елемента според нагоре или надолу по Y
                 // if(event.translationY > CARD_HEIGHT) {
                 //     scheduleOnRN(onReorder, task.id, index + 1);
@@ -149,22 +175,38 @@ import { useState } from "react";
             //     scale.value = withTiming(1)
             // })
             .onFinalize(() => {
-                positionVertical.value = 0;
-                scale.value = withTiming(1);
-                dragOffsetY.value = 0
-                scheduleOnRN(setIsDragging, false)
+                // positionVertical.value = withTiming(0);
+                // scale.value = withTiming(1);
+                dragScale.value = withTiming(1);
+                // dragOffsetY.value = 0
+                // scheduleOnRN(setIsDragging, false)
+                scheduleOnRN(onDragEnd)
             })
 
         const combinedGesture = Gesture.Race(deleteGester, reorderGester);
         // .Race - ще се изпълните този gesture който първо се активира от детектора (за това и му се подава)
 
+        // if (isActive) {
+        //     return(
+        //         <View
+        //             onLayout={(event) => {
+        //                 onRowLayout(
+        //                     task.id,
+        //                     event.nativeEvent.layout.height
+        //                 );
+        //             }}
+        //             style={{ height: rowHeight}}
+        //         />
+        //     );
+        // }
+
         return (
             <GestureDetector gesture={combinedGesture}>
                 <Animated.View
                     onLayout={(event) => {
-                        setRowHeight(event.nativeEvent.layout.height)
+                        onRowLayout(task.id, event.nativeEvent.layout.height)
                     }}
-                    layout={ isDragging ? undefined : LinearTransition.duration(380) }
+                    layout={LinearTransition.duration(380) }
                     style={[styles.container, animatedStyle]}
                 >
                     <CardTask task={task} categories={categories}/>
