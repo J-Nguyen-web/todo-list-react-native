@@ -66,6 +66,7 @@ import CardTask from "./CardTask.jsx";
             
             // return {
             //     transform: [
+            //         { translateX: positionHorizontal.value },
             //         { translateY: positionVertical.value },
             //         { scale: scale.value } // за трансформация на целия елемент (в случая card)
             //     ],
@@ -207,7 +208,11 @@ import CardTask from "./CardTask.jsx";
                         onRowLayout(task.id, event.nativeEvent.layout.height)
                     }}
                     layout={LinearTransition.duration(380) }
-                    style={[styles.container, animatedStyle]}
+                    style={[
+                        styles.container,
+                        animatedStyle,
+                    { opacity: isActive ? 0 : 1 },
+                ]}
                 >
                     <CardTask task={task} categories={categories}/>
                     

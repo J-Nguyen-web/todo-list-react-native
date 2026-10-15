@@ -38,7 +38,7 @@ export default function HomeNavigator() {
     const { tasks, tasksReorder, removeTask } = useTasks();
     const { categories } = useCategories();
 
-    const scrollOffsetRef = useRef(0);
+    const lastTargetIndexRef = useRef(null);
     const tasksRef = useRef(tasks);
     const positionsRef = useRef({});
     const activeTaskIdRef = useRef(null);
@@ -95,20 +95,20 @@ export default function HomeNavigator() {
 
     function handleDragStart(taskId) {
         activeTaskIdRef.current = taskId;
+        lastTargetIndexRef.current =tasksRef.current.findIndex(
+            task => task.id === taskId
+        )
         setActiveTaskId(taskId);
     }
 
     function handleDragMove(taskId, draggedCenterY) {
+        if ( activeTaskIdRef.current !== taskId) return;
+        
         const currentTasks = tasksRef.current;
         const positions = positionsRef.current;
 
-        if ( activeTaskIdRef.current !== taskId) {
-            return;
-        }
         
-        const otherTasks = currentTasks.filter(
-            (task) => task.id !== taskId
-        )
+        const otherTasks = currentTasks.filter( task => task.id !== taskId)
 
         let targetIndex = 0;
 
@@ -116,21 +116,27 @@ export default function HomeNavigator() {
             const position = positions[task.id];
 
             if (position && draggedCenterY > position.center) {
-                targetIndex +=1;
+                targetIndex ++;
             }
         }
         
         const currentIndex = currentTasks.findIndex(
-            (task) => task.id === taskId
+            task => task.id === taskId
         )
 
-        if (targetIndex !== currentIndex) {
-            tasksReorder(taskId, targetIndex)
-        }
+        if (targetIndex === currentIndex ||
+            targetIndex === lastTargetIndexRef.current
+        ) {return}
+
+        //set immediately before react has time to render
+        lastTargetIndexRef.current = targetIndex;
+
+        // tasksReorder(taskId, targetIndex)
     }
 
     function handleDragEnd() {
         activeTaskIdRef.current = null;
+        lastTargetIndexRef.current = null;
         setActiveTaskId(null)
     }
     const favCategories = categories.filter( category => category.favorite === 1)
