@@ -26,6 +26,9 @@ import CardTask from "./CardTask.jsx";
         onDragStart,
         onDragMove,
         onDragEnd,
+        dragFromIndex,
+        dragToIndex,
+        draggedRowHeight,
     }) {
         // const [rowHeight, setRowHeight] = useState(0); // rowHeight will be detected from onLayout in Animated.View
         // const [isDragging, setIsDragging] = useState(false);
@@ -57,22 +60,36 @@ import CardTask from "./CardTask.jsx";
                     ]
                 )
             }
-                
-        const animatedStyle = useAnimatedStyle(() => ({
-            transform: [
-                { translateX: positionHorizontal.value},
-            ]
-            // const isSelected = scale.value > 1
+        
+        const ROW_GAP = 6;
+
+        const animatedStyle = useAnimatedStyle(() => {
+            const from = dragFromIndex.value;
+            const to = dragToIndex.value;
+
+            let translateY = 0
+
+            if (from !== -1 && to !== -1 && index !== from) {
+                const shift = draggedRowHeight.value + ROW_GAP;
+
+                if(from < to && index > from && index <= to) {
+                    // Draggin down: move intervening rows up
+                    translateY = -shift;
+                } else if (to < from && index >= to && index < from) {
+                    // Draggin up: move intervening rows down.
+                    translateY = shift;
+                }
+            }
+
+            return {
+                transform: [
+                    { translateX: positionHorizontal.value},
+                    {translateY: withTiming(translateY, {duration: 180}) },
+                ]    
+            }
             
-            // return {
-            //     transform: [
-            //         { translateX: positionHorizontal.value },
-            //         { translateY: positionVertical.value },
-            //         { scale: scale.value } // за трансформация на целия елемент (в случая card)
-            //     ],
-            //     zIndex: scale.value > 1 ? 1 : 0, // за да минава пред другите елементи когато се провлачва (zIndex става 1 по default е 0)
-            // }
-        }));
+
+        });
         
         const binOpacity = useAnimatedStyle (() => {
             const opacity = (-positionHorizontal.value -30) / 150; 
@@ -107,15 +124,12 @@ import CardTask from "./CardTask.jsx";
         const reorderGester = Gesture.Pan()
             .activateAfterLongPress(300) // активира gesture-a след задържане от половин секунда
             .onStart(() => {
-                // currentIndex.value = index;
-                // startIndex.value = index;
-                // dragOffsetY.value = 0;
                 startY.value = rowTop - scrollY.value;
                 dragY.value = startY.value;
                 dragScale.value = withTiming(1.06)
 
                 // scheduleOnRN(setIsDragging, true)
-                scheduleOnRN(onDragStart, task.id)
+                scheduleOnRN(onDragStart, task.id, index, rowHeight)
                 scheduleOnRN(Haptics.impactAsync); // selectionAsync - при активиране на gesture-a извибрирва (expo-haptic)
                 // scale.value = withTiming(1.06)
             })
@@ -128,60 +142,11 @@ import CardTask from "./CardTask.jsx";
 
                 // The JS handler changes the order only when the target changes
                 scheduleOnRN(onDragMove, task.id, draggedCenterY)
-                // const crossedRows = currentIndex.value - startIndex.value
-                // const layoutOffset = crossedRows * rowStep;
-                // let effectiveY = event.translationY - layoutOffset;
-                // positionVertical.value = event.translationY - layoutOffset; // card move countinuesly with the finger
-                // let effectiveY = event.translationY - dragOffsetY.value;
-
-                // if (
-                //     effectiveY > rowStep * 0.6 &&
-                //     currentIndex.value < itemCount - 1
-                // ) {
-                //     currentIndex.value += 1;
-                //     // dragOffsetY.value += rowStep;
-                //     // positionVertical.value = event.translationY - dragOffsetY.value;
-                //     scheduleOnRN(onReorder, task.id, currentIndex.value)
-                // } else if (
-                //     effectiveY < -rowStep * 0.6 &&
-                //     currentIndex.value > 0
-                // ) {
-                //     currentIndex.value -= 1;
-                //     // dragOffsetY.value -= rowStep;
-                //     // positionVertical.value = event.translationY - dragOffsetY.value;
-                    
-                //     scheduleOnRN(onReorder, task.id, currentIndex.value)
-                // }
-                // промяна на индекса на елемента според нагоре или надолу по Y
-                // if(event.translationY > CARD_HEIGHT) {
-                //     scheduleOnRN(onReorder, task.id, index + 1);
-                //     positionVertical.value -= CARD_HEIGHT;
-                // } else if (event.translationY < -CARD_HEIGHT){
-                //     scheduleOnRN(onReorder, task.id, index - 1);
-                //     positionVertical.value += CARD_HEIGHT;
-                // }
             })
-            // .onEnd((event) => {
-                // const offset = Math.round(event.translationY / CARD_HEIGHT)
-                // const targetIndex = Math.max(
-                //     0,
-                //     Math.min(itemCount -1, index + offset)
-                // );
 
-                // if(targetIndex !== index){
-                //     scheduleOnRN(onReorder, task.id, targetIndex)
-                // }
-
-            //     positionVertical.value = withTiming(0);
-            //     scale.value = withTiming(1)
-            // })
             .onFinalize(() => {
-                // positionVertical.value = withTiming(0);
-                // scale.value = withTiming(1);
                 dragScale.value = withTiming(1);
-                // dragOffsetY.value = 0
-                // scheduleOnRN(setIsDragging, false)
-                scheduleOnRN(onDragEnd)
+                scheduleOnRN(onDragEnd, task.id)
             })
 
         const combinedGesture = Gesture.Race(deleteGester, reorderGester);

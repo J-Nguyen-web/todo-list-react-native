@@ -38,7 +38,12 @@ export default function HomeNavigator() {
     const { tasks, tasksReorder, removeTask } = useTasks();
     const { categories } = useCategories();
 
+
     const lastTargetIndexRef = useRef(null);
+    const dragFromIndex = useSharedValue(-1);
+    const dragToIndex = useSharedValue(-1);
+    const draggedRowHeight = useSharedValue(0);
+    
     const tasksRef = useRef(tasks);
     const positionsRef = useRef({});
     const activeTaskIdRef = useRef(null);
@@ -93,12 +98,15 @@ export default function HomeNavigator() {
         });
     }
 
-    function handleDragStart(taskId) {
+    function handleDragStart(taskId, index, height) {
         activeTaskIdRef.current = taskId;
-        lastTargetIndexRef.current =tasksRef.current.findIndex(
-            task => task.id === taskId
-        )
-        setActiveTaskId(taskId);
+        lastTargetIndexRef.current = index;
+        
+        dragFromIndex.value = index;
+        dragToIndex.value = index;
+        draggedRowHeight.value = height;
+
+        setActiveTaskId(taskId)
     }
 
     function handleDragMove(taskId, draggedCenterY) {
@@ -108,36 +116,56 @@ export default function HomeNavigator() {
         const positions = positionsRef.current;
 
         
-        const otherTasks = currentTasks.filter( task => task.id !== taskId)
-
+        // the list data stays unchanged during the drag
+        // calculate the insertion index using the other rows' original positions
         let targetIndex = 0;
 
-        for ( const task of otherTasks) {
+        for ( const task of currentTasks) {
+            if (task.id === taskId) continue;
+
             const position = positions[task.id];
 
             if (position && draggedCenterY > position.center) {
                 targetIndex ++;
             }
         }
+
+        targetIndex = Math.max(
+            0,
+            Math.min(targetIndex, currentTasks.length -1 )
+        );
+
+        // Animate only when the placeholder moves to another index
+        if (targetIndex === lastTargetIndexRef.current) return;
+
+        lastTargetIndexRef.current = targetIndex;
+        dragToIndex.value = targetIndex;
         
-        const currentIndex = currentTasks.findIndex(
+    }
+
+    function handleDragEnd(taskId) {
+        // Ignore finalization if this row never started a drag
+        if (activeTaskIdRef.current !== taskId) return;
+
+        const fromIndex = tasksRef.current.findIndex(
             task => task.id === taskId
         )
 
-        if (targetIndex === currentIndex ||
-            targetIndex === lastTargetIndexRef.current
-        ) {return}
+        const toIndex = lastTargetIndexRef.current ?? fromIndex;
 
-        //set immediately before react has time to render
-        lastTargetIndexRef.current = targetIndex;
-
-        // tasksReorder(taskId, targetIndex)
-    }
-
-    function handleDragEnd() {
+        // Clear the active gester state
         activeTaskIdRef.current = null;
         lastTargetIndexRef.current = null;
+
+        // Commit the final order once, after the gesture ends
+        if (fromIndex !== -1 && fromIndex !== toIndex) {
+            tasksReorder(taskId, toIndex)
+        }
         setActiveTaskId(null)
+
+        dragFromIndex.value = -1;
+        dragToIndex.value = -1;
+        draggedRowHeight.value = 0;        
     }
     const favCategories = categories.filter( category => category.favorite === 1)
 
@@ -295,6 +323,9 @@ export default function HomeNavigator() {
                                 onDragStart={handleDragStart}
                                 onDragMove={handleDragMove}
                                 onDragEnd={handleDragEnd}
+                                dragFromIndex={dragFromIndex}
+                                dragToIndex={dragToIndex}
+                                draggedRowHeight={draggedRowHeight}
                                 />
                             )}
                         />
