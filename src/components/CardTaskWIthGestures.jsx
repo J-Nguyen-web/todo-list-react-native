@@ -6,8 +6,6 @@ import { scheduleOnRN } from "react-native-worklets";
 import * as Haptics from "expo-haptics"
 import CardTask from "./CardTask.jsx";
 
-    // const CARD_HEIGHT = 100;
-
  // separate responsibility (добавя gester behaviour and posibility to construct it) so cardTask only render
     export default function CardTaskWithGestures({
         task,
@@ -30,36 +28,26 @@ import CardTask from "./CardTask.jsx";
         dragToIndex,
         draggedRowHeight,
     }) {
-        // const [rowHeight, setRowHeight] = useState(0); // rowHeight will be detected from onLayout in Animated.View
-        // const [isDragging, setIsDragging] = useState(false);
         const startY = useSharedValue(0);
-        // const position = useSharedValue(0);
-        // const rowStep = rowHeight + ROW_GAP;
-        
         const positionHorizontal = useSharedValue(0);
-        // const positionVertical = useSharedValue(0);
-        // const currentIndex = useSharedValue(index);
-        // const startIndex = useSharedValue(index);
-        // const dragOffsetY = useSharedValue(0); // layout changes compensator
-        // const scale = useSharedValue(1);
 
         function confirmDeleteTask (taskId) {
-                Alert.alert(
-                    'Delete',
-                    'Are you sure you want to delete that task?',
-                    [
-                        {
-                            text: 'Dismiss',
-                            style: 'cancel',
-                        },
-                        {
-                            text: 'Delete',
-                            style: 'destructive',
-                            onPress:() => removeTask(taskId)
-                        }
-                    ]
-                )
-            }
+            Alert.alert(
+                'Delete',
+                'Are you sure you want to delete that task?',
+                [
+                    {
+                        text: 'Dismiss',
+                        style: 'cancel',
+                    },
+                    {
+                        text: 'Delete',
+                        style: 'destructive',
+                        onPress:() => removeTask(taskId)
+                    }
+                ]
+            )
+        }
         
         const ROW_GAP = 6;
 
@@ -84,11 +72,9 @@ import CardTask from "./CardTask.jsx";
             return {
                 transform: [
                     { translateX: positionHorizontal.value},
-                    {translateY: withTiming(translateY, {duration: 180}) },
+                    {translateY: withTiming(translateY, {duration: 260}) },
                 ]    
             }
-            
-
         });
         
         const binOpacity = useAnimatedStyle (() => {

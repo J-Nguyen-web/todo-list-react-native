@@ -31,6 +31,7 @@ export default function HomeNavigator() {
     const ROW_GAP = 6;
     const favListRef = useRef(null);
     // const [favCategories, setFavCategories] = useState(); // todo favCategories
+    const [pendingRevealId, setPendingRevealId] = useState(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
     const [rowHeight, setRowHeight] = useState({}); // rowHeight will be detected from onLayout in Animated.View
@@ -51,6 +52,23 @@ export default function HomeNavigator() {
     const dragY = useSharedValue(0);
     const dragScale = useSharedValue(1);
     const scrollY = useSharedValue(0);
+
+    useEffect(() => {
+        if(pendingRevealId === null) return;
+
+        const index = tasks.findIndex(
+            task => task.id === pendingRevealId
+        )
+
+        if (index === -1) return;
+
+        setActiveTaskId(null);
+        setPendingRevealId(null);
+
+            dragFromIndex.value = -1;
+            dragToIndex.value = -1;
+            draggedRowHeight.value = 0;        
+    },[tasks, pendingRevealId])
 
     tasksRef.current = tasks;
 
@@ -159,13 +177,15 @@ export default function HomeNavigator() {
 
         // Commit the final order once, after the gesture ends
         if (fromIndex !== -1 && fromIndex !== toIndex) {
-            tasksReorder(taskId, toIndex)
-        }
-        setActiveTaskId(null)
+            setActiveTaskId(null)
 
-        dragFromIndex.value = -1;
-        dragToIndex.value = -1;
-        draggedRowHeight.value = 0;        
+            dragFromIndex.value = -1;
+            dragToIndex.value = -1;
+            draggedRowHeight.value = 0;
+            return;
+        }
+            setPendingRevealId(taskId)
+            tasksReorder(taskId, toIndex)
     }
     const favCategories = categories.filter( category => category.favorite === 1)
 
