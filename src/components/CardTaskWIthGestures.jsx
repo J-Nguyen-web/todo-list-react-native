@@ -131,26 +131,12 @@ import CardTask from "./CardTask.jsx";
             })
 
             .onFinalize(() => {
-                dragScale.value = withTiming(1);
+                // dragScale.value = withTiming(1);
                 scheduleOnRN(onDragEnd, task.id)
             })
 
         const combinedGesture = Gesture.Race(deleteGester, reorderGester);
         // .Race - ще се изпълните този gesture който първо се активира от детектора (за това и му се подава)
-
-        // if (isActive) {
-        //     return(
-        //         <View
-        //             onLayout={(event) => {
-        //                 onRowLayout(
-        //                     task.id,
-        //                     event.nativeEvent.layout.height
-        //                 );
-        //             }}
-        //             style={{ height: rowHeight}}
-        //         />
-        //     );
-        // }
 
         return (
             <GestureDetector gesture={combinedGesture}>
@@ -158,7 +144,7 @@ import CardTask from "./CardTask.jsx";
                     onLayout={(event) => {
                         onRowLayout(task.id, event.nativeEvent.layout.height)
                     }}
-                    layout={LinearTransition.duration(380) }
+                    layout={LinearTransition.duration(140) }
                     style={[
                         styles.container,
                         animatedStyle,

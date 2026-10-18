@@ -12,7 +12,7 @@ import getCategories from "../services/categoryService.js";
 import Heading from "../components/ui/Heading.jsx";
 import CardFavCategories from "../components/CardFavCategories.jsx";
 import CardTaskWithGestures from "../components/CardTaskWithGestures.jsx"
-import Animated, {useAnimatedStyle, useSharedValue} from "react-native-reanimated"
+import Animated, {useAnimatedStyle, useSharedValue, withTiming} from "react-native-reanimated"
 import CardTask from "../components/CardTask.jsx";
 
 
@@ -48,6 +48,7 @@ export default function HomeNavigator() {
     const tasksRef = useRef(tasks);
     const positionsRef = useRef({});
     const activeTaskIdRef = useRef(null);
+    const dragReleaseTimerRef = useRef(null)
 
     const dragY = useSharedValue(0);
     const dragScale = useSharedValue(1);
@@ -176,16 +177,33 @@ export default function HomeNavigator() {
         lastTargetIndexRef.current = null;
 
         // Commit the final order once, after the gesture ends
-        if (fromIndex !== -1 && fromIndex !== toIndex) {
+        if (fromIndex === -1 && fromIndex === toIndex) {
             setActiveTaskId(null)
 
             dragFromIndex.value = -1;
             dragToIndex.value = -1;
             draggedRowHeight.value = 0;
+            dragScale.value = withTiming(1)
             return;
         }
-            setPendingRevealId(taskId)
-            tasksReorder(taskId, toIndex)
+            tasksReorder(taskId, toIndex);
+
+            dragFromIndex.value = -1;
+            dragToIndex.value = -1;
+            draggedRowHeight.value = 0;
+
+        if (dragReleaseTimerRef.current) {
+            clearTimeout(dragReleaseTimerRef.current)
+        }
+
+        dragReleaseTimerRef.current = setTimeout(() => {
+            // dont hide a newer drag if one has already started
+            if (activeTaskIdRef.current !== null) return;
+
+            setActiveTaskId(null);
+            dragScale.value = withTiming(1);
+            dragReleaseTimerRef.current = null;
+        }, 180)
     }
     const favCategories = categories.filter( category => category.favorite === 1)
 
