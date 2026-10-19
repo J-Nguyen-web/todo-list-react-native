@@ -1,9 +1,9 @@
 import { StyleSheet, View, Text, TouchableOpacity, Alert, TextInput, ScrollView, KeyboardAvoidingView } from "react-native";
 import { useTasks } from "../context/TaskContext.js";
 import { useCategories } from "../context/CategoryContext.js";
-import emojiRegex from "emoji-regex";
 import { Feather, FontAwesome6, MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
+import emojiRegex from "emoji-regex";
 
 export default function CardCategoryOptions({category}) {
 

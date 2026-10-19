@@ -1,20 +1,35 @@
 import { Entypo, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Pressable } from "react-native";
+import { useTasks } from "../context/TaskContext.js";
 
 export default function CardTask({task, categories}) {
     if (!task || !categories) return null
+    
+    const { updateTask } = useTasks();
 
     const category = categories.find( item => Number(item.id) === Number(task.categoryId) )
+
+    async function handleOnComplete() {
+        console.log(task)
+        const updatedTask = {
+            ...task,
+            completed: !task.completed
+        }
+        await updateTask(updatedTask, task.id)
+    }
 
     return (    
         <View style={[styles.cardContainer, { borderLeftColor: category?.color}]}>
 
             <View style={styles.leftPart}>
-                <Ionicons
-                    name={task.completed ? "checkmark-circle" : "ellipse-outline"}
-                    size={28}
-                    color={task.completed ? "#50a353" : "#999"}
-                />
+                <Pressable onPress={handleOnComplete}>
+                    <Ionicons
+                        name={task.completed ? "checkmark-circle" : "ellipse-outline"}
+                        size={28}
+                        color={task.completed ? "#50a353" : "#999"}
+                    />
+                </Pressable>
+
                 <View style={styles.icon}>
                     <Text style={{fontSize:32}}>{category?.icon}</Text>
                 </View>
