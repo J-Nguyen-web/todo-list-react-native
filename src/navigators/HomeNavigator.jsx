@@ -11,7 +11,7 @@ import CardCategory from "../components/CardCategory.jsx";
 import getCategories from "../services/categoryService.js";
 import Heading from "../components/ui/Heading.jsx";
 import CardFavCategories from "../components/CardFavCategories.jsx";
-import CardTaskWithGestures from "../components/CardTaskWithGestures.jsx"
+import CardTaskWithGestures from "../components/CardTaskWithGesture.jsx"
 import Animated, {useAnimatedStyle, useSharedValue, withTiming} from "react-native-reanimated"
 import CardTask from "../components/CardTask.jsx";
 
@@ -66,9 +66,10 @@ export default function HomeNavigator() {
         setActiveTaskId(null);
         setPendingRevealId(null);
 
-            dragFromIndex.value = -1;
-            dragToIndex.value = -1;
-            draggedRowHeight.value = 0;        
+        dragFromIndex.value = -1;
+        dragToIndex.value = -1;
+        draggedRowHeight.value = 0;
+        
     },[tasks, pendingRevealId])
 
     tasksRef.current = tasks;

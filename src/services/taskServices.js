@@ -88,15 +88,18 @@ export async function getTasksService(db) {
 export async function updateTaskService(db, task, id) {
     await db.runAsync(
         `UPDATE tasks
-        SET title = ?,
+        SET 
+            title = ?,
             description = ?,
             category_id = ?,
+            completed = ?,
             updated_at = ?
 
         WHERE id = ?`,
         task.title,
         task.description,
-        task.category_id,
+        task.categoryId,
+        task.completed,
         new Date().toISOString(),
         id        
     )

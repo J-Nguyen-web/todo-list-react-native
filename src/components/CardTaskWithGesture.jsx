@@ -140,35 +140,42 @@ import CardTask from "./CardTask.jsx";
 
         return (
             <GestureDetector gesture={combinedGesture}>
-                <Animated.View
-                    onLayout={(event) => {
-                        onRowLayout(task.id, event.nativeEvent.layout.height)
-                    }}
-                    layout={LinearTransition.duration(140) }
-                    style={[
-                        styles.container,
-                        animatedStyle,
-                    { opacity: isActive ? 0 : 1 },
-                ]}
-                >
-                    <CardTask task={task} categories={categories}/>
-                    
+                <View style={styles.taskWrapper}>
                     <Animated.View
                         pointerEvents="none"
                         style={[styles.deleteBtnAnimated, binOpacity]}>
                         <Ionicons name="trash-outline" size={25} color="#ff0000" />
                     </Animated.View>
-                </Animated.View>
+
+                    <Animated.View
+                        onLayout={(event) => {
+                            onRowLayout(task.id, event.nativeEvent.layout.height)
+                        }}
+                        layout={LinearTransition.duration(140) }
+                        style={[
+                            styles.container,
+                            animatedStyle,
+                        { opacity: isActive ? 0 : 1 },
+                    ]}
+                    >
+                        <CardTask task={task} categories={categories}/>
+                    </Animated.View>                    
+                </View>
+
             </GestureDetector>
         )        
     }
 const styles = StyleSheet.create({
-    container: {
+    rowWrapper: {
         position: 'relative'
+    },
+    container: {
+        position: 'relative',
+        zIndex: 1,
     },
     deleteBtnAnimated: {
         position: 'absolute',
-        zIndex: -1,
+        zIndex: 0,
         right: 20,
         top: 15,
         justifyContent: 'center',

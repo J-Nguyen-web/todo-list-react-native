@@ -13,7 +13,7 @@ export default function CardTask({task, categories}) {
         console.log(task)
         const updatedTask = {
             ...task,
-            completed: !task.completed
+            completed: task.completed === 0 ? 1 : 0
         }
         await updateTask(updatedTask, task.id)
     }
