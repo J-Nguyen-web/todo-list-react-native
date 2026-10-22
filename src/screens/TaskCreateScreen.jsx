@@ -7,7 +7,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import { useTasks } from "../context/TaskContext.js";
 import { useCategories } from "../context/CategoryContext.js";
 import { createTask } from "../services/taskServices.js";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker"
 import createCategoryService from "../services/categoryService.js";
 
@@ -15,6 +15,7 @@ export default function TaskCreateScreen() {
 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [ task, setTask ] = useState('');
     const [subtasks, setSubtasks] = useState([]);
     const [subtaskTitle, setSubtaskTitle] = useState('');
     const [category, setCategory] = useState([]);
@@ -26,13 +27,30 @@ export default function TaskCreateScreen() {
     const [showTimeicker, setShowTimeicker] = useState(false);
     const navigation = useNavigation();
 
-    const { createTask, updateTask, removeTask } = useTasks();
+    const { tasks, createTask, updateTask, removeTask } = useTasks();
     const { categories, createCategory, setCategories } = useCategories();
+
+    const route = useRoute();
+    const { taskId } = route.params ?? {};
+    const isEdit = taskId != null;
 
     const dropdownCategories = categories.map((item) => ({
         label: item.name,
         value: item.id
-    }))
+    }));
+
+    useEffect(() => {
+        console.log('before')
+        if(!isEdit) return;
+        console.log('after')
+        const filteredTask = tasks.filter(task => task.id === taskId)
+        setTask(filteredTask);
+        console.log(task)
+        if(!task) return;
+
+        setTitle(task.title)
+        setDescription(task.description)
+    },[tasks, taskId])
 
     async function handleCreateTask(){
         try {
@@ -140,6 +158,15 @@ export default function TaskCreateScreen() {
             setCategory(null);
             setNewCategory(null);
             setSubtasks([]);
+
+            if(isEdit) {
+                await updateTask({
+                    ...task,
+                    ...taskData,
+                }, task.id)
+            } else {
+                await createTask(taskData)
+            }
         } catch (error) {
             console.error("CREATE TASK ERROR: ", error)
             if (error.message.incudes("UNIQUE constrain failed")) {
@@ -192,7 +219,7 @@ export default function TaskCreateScreen() {
                     <View>
                         <AntDesign name="close" size={25} color='black' />
                     </View>
-                    <Text style={styles.title}>Create Task</Text>
+                    <Text style={styles.title}>{isEdit ? "Edit Task" : "Create Task"}</Text>
                     <TouchableOpacity onPress={handleCreateTask}>
                         <Text style={styles.save}>
                             Save
@@ -207,7 +234,7 @@ export default function TaskCreateScreen() {
                             textAlignVertical = 'top'
                             placeholder="Just do it..."
                             style={styles.textInput}
-                            value={title}
+                            value={task.title || title}
                             onChangeText={setTitle}
                         />                
                     </View>
@@ -349,7 +376,7 @@ export default function TaskCreateScreen() {
                 <View>
                     <TouchableOpacity style={styles.createButton} onPress={handleCreateTask}>
                         <Text style={{fontSize: 22}}>
-                            Create test task
+                            {isEdit ? "Save changes" : "Create task"}
                         </Text>
                     </TouchableOpacity>
                 </View>

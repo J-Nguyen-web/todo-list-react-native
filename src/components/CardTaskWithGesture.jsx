@@ -1,10 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Alert, View, StyleSheet } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, {useAnimatedStyle, useSharedValue, withTiming, LinearTransition} from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
-import * as Haptics from "expo-haptics"
+import Animated, {useAnimatedStyle, useSharedValue, withTiming, LinearTransition} from "react-native-reanimated";
 import CardTask from "./CardTask.jsx";
+import { useNavigation } from "@react-navigation/native";
+import * as Haptics from "expo-haptics"
 
  // separate responsibility (добавя gester behaviour and posibility to construct it) so cardTask only render
     export default function CardTaskWithGestures({
@@ -31,6 +32,8 @@ import CardTask from "./CardTask.jsx";
         const startY = useSharedValue(0);
         const positionHorizontal = useSharedValue(0);
 
+        const navigation = useNavigation();
+
         function confirmDeleteTask (taskId) {
             Alert.alert(
                 'Delete',
@@ -47,6 +50,10 @@ import CardTask from "./CardTask.jsx";
                     }
                 ]
             )
+        }
+
+        function navigateToEditTask(taskId){
+            navigation.navigate("TaskCreateNavigator", {taskId: taskId})
         }
         
         const ROW_GAP = 6;
@@ -92,6 +99,12 @@ import CardTask from "./CardTask.jsx";
             }
         })
 
+        const editGester = Gesture.Tap()
+            .onEnd((event, succes) => {
+                if(succes) {
+                    scheduleOnRN(navigateToEditTask, task.id)
+                }
+            })
         const deleteGester = Gesture.Pan()
             .activeOffsetX([-20, 20]) // да се активира gesture-а при определена дистанция по xоризонтала
             .onUpdate((event) => {
@@ -135,7 +148,7 @@ import CardTask from "./CardTask.jsx";
                 scheduleOnRN(onDragEnd, task.id)
             })
 
-        const combinedGesture = Gesture.Race(deleteGester, reorderGester);
+        const combinedGesture = Gesture.Race(deleteGester, reorderGester, editGester);
         // .Race - ще се изпълните този gesture който първо се активира от детектора (за това и му се подава)
 
         return (
@@ -161,7 +174,6 @@ import CardTask from "./CardTask.jsx";
                         <CardTask task={task} categories={categories}/>
                     </Animated.View>                    
                 </View>
-
             </GestureDetector>
         )        
     }
