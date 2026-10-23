@@ -40,20 +40,29 @@ export default function TaskCreateScreen() {
     }));
 
     useEffect(() => {
-        console.log('before')
         if(!isEdit) return;
-        console.log('after')
-        const filteredTask = tasks.filter(task => task.id === taskId)
-        setTask(filteredTask);
-        console.log(task)
-        if(!task) return;
+        const foundTask = tasks.find(task => task.id === taskId)
+        // setTask(foundTask); // thats asyncroniously update and wont show immidietly
+        if(!foundTask) return;
 
-        setTitle(task.title)
-        setDescription(task.description)
+        setTitle(foundTask.title)
+        setDescription(foundTask.description)
+        setCategory(foundTask.categoryId)
     },[tasks, taskId])
 
     async function handleCreateTask(){
         try {
+
+            if(isEdit) {
+                await updateTask({
+                    ...task,
+                    title,
+                    description,
+                    category,
+
+
+                }, task.id)
+            } else {
             const now = new Date().toISOString();
             let categoryId = category;
             setCategoryError("");
@@ -158,14 +167,6 @@ export default function TaskCreateScreen() {
             setCategory(null);
             setNewCategory(null);
             setSubtasks([]);
-
-            if(isEdit) {
-                await updateTask({
-                    ...task,
-                    ...taskData,
-                }, task.id)
-            } else {
-                await createTask(taskData)
             }
         } catch (error) {
             console.error("CREATE TASK ERROR: ", error)
