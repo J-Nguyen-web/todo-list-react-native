@@ -13,7 +13,6 @@ export default function CardTask({task, categories}) {
     const category = categories.find( item => Number(item.id) === Number(task.categoryId) )
 
     async function handleOnComplete() {
-        console.log(task)
         const updatedTask = {
             ...task,
             completed: task.completed === 0 ? 1 : 0

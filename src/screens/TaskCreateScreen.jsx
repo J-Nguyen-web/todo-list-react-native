@@ -42,6 +42,7 @@ export default function TaskCreateScreen() {
     useEffect(() => {
         if(!isEdit) return;
         const foundTask = tasks.find(task => task.id === taskId)
+        setTask(foundTask)
         // setTask(foundTask); // thats asyncroniously update and wont show immidietly
         if(!foundTask) return;
 
@@ -57,8 +58,8 @@ export default function TaskCreateScreen() {
                     ...task,
                     title,
                     description,
-                    category,
-                }, task.id)
+                    categoryId: category,
+                }, taskId)
                 navigation.navigate("AllTasks");
             } else {
             const now = new Date().toISOString();
@@ -212,7 +213,8 @@ export default function TaskCreateScreen() {
 
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={styles.container} 
+                    keyboardShouldPersistTaps = 'always'>
             <View>
                 <View style={styles.header}>
                     <View>
@@ -233,7 +235,7 @@ export default function TaskCreateScreen() {
                             textAlignVertical = 'top'
                             placeholder="Just do it..."
                             style={styles.textInput}
-                            value={task.title || title}
+                            value={title}
                             onChangeText={setTitle}
                         />                
                     </View>
