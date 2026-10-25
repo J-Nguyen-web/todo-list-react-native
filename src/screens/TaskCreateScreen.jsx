@@ -52,16 +52,14 @@ export default function TaskCreateScreen() {
 
     async function handleCreateTask(){
         try {
-
             if(isEdit) {
                 await updateTask({
                     ...task,
                     title,
                     description,
                     category,
-
-
                 }, task.id)
+                navigation.navigate("AllTasks");
             } else {
             const now = new Date().toISOString();
             let categoryId = category;

@@ -1,11 +1,14 @@
 import { Entypo, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet, View, Text, Pressable } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { useTasks } from "../context/TaskContext.js";
 
 export default function CardTask({task, categories}) {
     if (!task || !categories) return null
     
     const { updateTask } = useTasks();
+
+    const navigation = useNavigation();
 
     const category = categories.find( item => Number(item.id) === Number(task.categoryId) )
 
@@ -16,6 +19,10 @@ export default function CardTask({task, categories}) {
             completed: task.completed === 0 ? 1 : 0
         }
         await updateTask(updatedTask, task.id)
+    }
+    
+    function navigateToEditTask(){
+        navigation.navigate("TaskCreateNavigator", {taskId: task.id})
     }
 
     return (    
@@ -30,14 +37,17 @@ export default function CardTask({task, categories}) {
                     />
                 </Pressable>
 
-                <View style={styles.icon}>
-                    <Text style={{fontSize:32}}>{category?.icon}</Text>
-                </View>
+                <Pressable style={styles.leftPart} onPress={navigateToEditTask}>
+                    <View style={styles.icon}>
+                        <Text style={{fontSize:32}}>{category?.icon}</Text>
+                    </View>
 
-                <View style={styles.titleContainer}>
-                    <Text style={{flexWrap: 'wrap'}}>{task.title}</Text>
-                    <Text style={{ color: category?.color}}>{category?.name}</Text>
-                </View>
+                    <View style={styles.titleContainer}>
+                        <Text style={{flexWrap: 'wrap'}}>{task.title}</Text>
+                        <Text style={{ color: category?.color}}>{category?.name}</Text>
+                    </View>
+                </Pressable>
+
             </View>
             <View style={styles.rightPart}>
                 <Text>time</Text>

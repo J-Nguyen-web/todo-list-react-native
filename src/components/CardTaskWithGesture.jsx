@@ -52,9 +52,9 @@ import * as Haptics from "expo-haptics"
             )
         }
 
-        function navigateToEditTask(taskId){
-            navigation.navigate("TaskCreateNavigator", {taskId: taskId})
-        }
+        // function navigateToEditTask(taskId){
+        //     navigation.navigate("TaskCreateNavigator", {taskId: taskId})
+        // }
         
         const ROW_GAP = 6;
 
@@ -99,12 +99,12 @@ import * as Haptics from "expo-haptics"
             }
         })
 
-        const editGester = Gesture.Tap()
-            .onEnd((event, succes) => {
-                if(succes) {
-                    scheduleOnRN(navigateToEditTask, task.id)
-                }
-            })
+        // const editGester = Gesture.Tap()
+        //     .onEnd((event, succes) => {
+        //         if(succes) {
+        //             scheduleOnRN(navigateToEditTask, task.id)
+        //         }
+        //     })
         const deleteGester = Gesture.Pan()
             .activeOffsetX([-20, 20]) // да се активира gesture-а при определена дистанция по xоризонтала
             .onUpdate((event) => {
@@ -148,7 +148,7 @@ import * as Haptics from "expo-haptics"
                 scheduleOnRN(onDragEnd, task.id)
             })
 
-        const combinedGesture = Gesture.Race(deleteGester, reorderGester, editGester);
+        const combinedGesture = Gesture.Race(deleteGester, reorderGester,);
         // .Race - ще се изпълните този gesture който първо се активира от детектора (за това и му се подава)
 
         return (
