@@ -53,16 +53,24 @@ export default function TabNavigator() {
                 ),                
             }}/>
             
-            <Tabs.Screen name="AllTasks" component={AllTaskScreen} options={{
-                headerShown: false,
-                title: "All Tasks",
-                headerTitleAlign: 'center',
-                tabBarActiveTintColor: '#000000',
-                tabBarInactiveTintColor: '#000',
-                tabBarIcon: ({ focused ,color, size}) => (
-                    // <Feather name="settings" size={ focused ? size+3 : size-3 } color={color}/>
-                    <FontAwesome    name="tasks" size={focused ? size+3 : size -3 } color={color} />
-                ),                
+            <Tabs.Screen 
+                name="AllTasks" 
+                component={AllTaskScreen}
+                listeners={({navigation}) => ({ // следи за събития за дадения път
+                    tabPress: () => { // при натискане Таб-а ще се извърши 
+                        navigation.setParams({ categoryId : null}) // залагане на стойност на параметър а след навигацията
+                    }
+                })}
+                options={{
+                    headerShown: false,
+                    title: "All Tasks",
+                    headerTitleAlign: 'center',
+                    tabBarActiveTintColor: '#000000',
+                    tabBarInactiveTintColor: '#000',
+                    tabBarIcon: ({ focused ,color, size}) => (
+                        // <Feather name="settings" size={ focused ? size+3 : size-3 } color={color}/>
+                        <FontAwesome    name="tasks" size={focused ? size+3 : size -3 } color={color} />
+                    ),
             }}/>
 
             <Tabs.Screen name="ProfileNavigator" component={ProfileNavigator} options={{

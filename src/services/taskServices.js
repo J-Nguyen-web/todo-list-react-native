@@ -86,7 +86,6 @@ export async function getTasksService(db) {
 }
 
 export async function updateTaskService(db, task, id) {
-    console.log(task, id)
     await db.runAsync(
         `UPDATE tasks
         SET 

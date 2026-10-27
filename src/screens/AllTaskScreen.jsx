@@ -8,6 +8,7 @@ import { useCategories } from "../context/CategoryContext.js";
 import CardCategory from "../components/CardCategory.jsx";
 import CardTask from "../components/CardTask.jsx";
 import categoriesGroup from "../util/categoriesGroup.js";
+import { useRoute } from "@react-navigation/native";
 
 export default function AllTaskScreen() {
 
@@ -18,6 +19,11 @@ export default function AllTaskScreen() {
 
     const { tasks } = useTasks();
     const { categories } = useCategories();
+    const route = useRoute();
+    const { categoryId = null } = route.params ?? {};
+
+    const filteredTasks = tasks.filter( (task) => task.categoryId === categoryId);
+    const displayedTasks = categoryId === null ? tasks : filteredTasks
 
     const handleFavScroll = (event) => {
         const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
@@ -125,7 +131,7 @@ export default function AllTaskScreen() {
                     ALL
                 </Text>
                 <FlatList
-                    data={tasks}
+                    data={displayedTasks}
                     renderItem={({ item }) => (<CardTask task={item} categories={categories} />)}
                     keyExtractor={(item) => item.id.toString()}
                 />                

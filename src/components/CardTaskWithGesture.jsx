@@ -89,6 +89,7 @@ import * as Haptics from "expo-haptics"
             // -50 е като trash hold след който ще се активира увеличаването на opacity-то ще започне да се увеличава
             //  (150 е като скорост за всеки пиксел (като при 100 след 100 пиксела ще е 100% което е доста бързо))
 
+            // todo maximum allowed size of the icon
             return {
                 opacity: Math.min(Math.max(opacity, 0), 1), // clamping - keep valid value range
                 // Math.max(opacity, 0) - Returns the max of two values( prevent from going under 0, bcoz every time less than 0 will return zero)

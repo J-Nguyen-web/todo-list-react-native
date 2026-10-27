@@ -15,21 +15,18 @@ export default function CardCategory({category, variant}) {
 
     const styles = variantStyles[variant]; // в зависимост от варианта на стила се извлича от обекта със стилове най-отдолу
 
-    function handleRedirectCategory(){}
 
     return (
         <View style={[styles.cardContainer, {backgroundColor: category.background, borderWidth: 0.7, borderColor: category.color}]}>
-            <TouchableOpacity style={styles.category} onPress={handleRedirectCategory}>
-                <Text style={styles.icon}> {category.icon} </Text>
-                <Text style={[styles.categoryTitle, {color: category.color}]}> {category.name} </Text>
-                { variant == "favorite" && (
-                <View style={styles.rightSide}>
-                    <Text style={[styles.taskCount, {color: category.color}]}>
-                        {taskCount} {taskCount > 1 ? 'tasks' : 'task'}
-                    </Text> 
-                </View>
-                )}
-            </TouchableOpacity>
+            <Text style={styles.icon}> {category.icon} </Text>
+            <Text style={[styles.categoryTitle, {color: category.color}]}> {category.name} </Text>
+            { variant == "favorite" && (
+            <View style={styles.rightSide}>
+                <Text style={[styles.taskCount, {color: category.color}]}>
+                    {taskCount} {taskCount > 1 ? 'tasks' : 'task'}
+                </Text> 
+            </View>
+            )}
         </View>
     );
 }

@@ -2,10 +2,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useSQLiteContext } from "expo-sqlite";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useMemo, useEffect, useRef, useState } from "react";
-import { Alert, Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Dimensions, FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTasks } from "../context/TaskContext.js";
 import { useCategories } from "../context/CategoryContext.js";
+import { useNavigation } from "@react-navigation/native";
 import categoriesGroup from "../util/categoriesGroup.js";
 import CardCategory from "../components/CardCategory.jsx";
 import getCategories from "../services/categoryService.js";
@@ -38,6 +39,7 @@ export default function HomeNavigator() {
     const [activeTaskId, setActiveTaskId] = useState(null);
     const { tasks, tasksReorder, removeTask } = useTasks();
     const { categories } = useCategories();
+    const navigation = useNavigation();
 
 
     const lastTargetIndexRef = useRef(null);
@@ -208,6 +210,10 @@ export default function HomeNavigator() {
     }
     const favCategories = categories.filter( category => category.favorite === 1)
 
+    function handleCategoryTasks(item){
+        navigation.navigate("AllTasks", { categoryId: item.id})
+    }
+
     const handleFavScroll = (event) => {
         const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
 
@@ -252,18 +258,26 @@ export default function HomeNavigator() {
                     <View style={styles.favoriteCategories}>
                         <View style={styles.homeTaskHeader}>
                             <Heading>Favorite Categories</Heading>
-                            <Heading>Edit</Heading>                            
+                            <TouchableOpacity onPress={() => navigation.navigate("ProfileNavigator", {screen: "MyCategories"})}>
+                                <Heading>Edit</Heading>                             
+                            </TouchableOpacity>
+                        
                         </View>
                             <FlatList
                                 ref={favListRef}
                                 data={favCategories}
-                                renderItem={({item}) => <CardCategory category={item} variant="favorite"/>}
+                                renderItem={({item}) => (
+                                    <Pressable onPress={()=>{console.log('pressed'); handleCategoryTasks(item)}}>
+                                        <CardCategory category={item} variant="favorite"/>
+                                    </Pressable>
+                                )}
                                 keyExtractor={(item) => item.id.toString()}
                                 horizontal
                                 contentContainerStyle={styles.favListContent}
                                 showsHorizontalScrollIndicator={false}
                                 onScroll={handleFavScroll}
                                 scrollEventThrottle={16}
+                                
                             />
 
                             {canScrollLeft && (
