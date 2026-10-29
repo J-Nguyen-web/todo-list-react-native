@@ -267,7 +267,7 @@ export default function HomeNavigator() {
                                 ref={favListRef}
                                 data={favCategories}
                                 renderItem={({item}) => (
-                                    <Pressable onPress={()=>{console.log('pressed'); handleCategoryTasks(item)}}>
+                                    <Pressable onPress={()=>{ handleCategoryTasks(item)}}>
                                         <CardCategory category={item} variant="favorite"/>
                                     </Pressable>
                                 )}

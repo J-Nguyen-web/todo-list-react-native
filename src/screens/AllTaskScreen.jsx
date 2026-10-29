@@ -9,6 +9,7 @@ import CardCategory from "../components/CardCategory.jsx";
 import CardTask from "../components/CardTask.jsx";
 import categoriesGroup from "../util/categoriesGroup.js";
 import { useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
 export default function AllTaskScreen() {
 
@@ -19,12 +20,20 @@ export default function AllTaskScreen() {
 
     const { tasks } = useTasks();
     const { categories } = useCategories();
+    const navigation = useNavigation();
     const route = useRoute();
     const { categoryId = null } = route.params ?? {};
 
     const filteredTasks = tasks.filter( (task) => task.categoryId === categoryId);
     const displayedTasks = categoryId === null ? tasks : filteredTasks
 
+    function handleCategoryFilter(category){
+        navigation.setParams({ categoryId: category.id})
+    }
+    
+    function handleClearFilter() {
+        navigation.setParams({ categoryId: null})
+    }
     const handleFavScroll = (event) => {
         const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
 
@@ -52,17 +61,29 @@ export default function AllTaskScreen() {
             </View>
 
             <View style={styles.allCategories}>
+                <Text style={styles.subTitle}> filter by Categories:</Text>
+                <View style={{flexDirection: 'row',}}>
+
+               
+                <Pressable onPress={handleClearFilter}>
+                    <Text style={styles.categoryList}>ALL</Text>
+                </Pressable>
                 <FlatList
                     ref={categoryList}
                     contentContainerStyle={styles.categoryList}
                     horizontal
                     data={categories}
                     keyExtractor={(item) => item.id.toString()}
-                    renderItem={({item}) => <CardCategory category={item} variant="allTasksCategories" />}
+                    renderItem={({item}) => 
+                        <Pressable onPress={() => handleCategoryFilter(item)}>
+                            <CardCategory category={item} variant="allTasksCategories" />
+                        </Pressable>
+                    }
                     showsHorizontalScrollIndicator={false}
                     onScroll={handleFavScroll}
                     scrollEventThrottle={16}
-                />
+                /> 
+                </View>
 
                 {canScrollLeft && (
                     <View style={styles.leftScrollControl}>
@@ -127,9 +148,6 @@ export default function AllTaskScreen() {
             </View>
 
             <View style={styles.taskContainer}>
-                <Text>
-                    ALL
-                </Text>
                 <FlatList
                     data={displayedTasks}
                     renderItem={({ item }) => (<CardTask task={item} categories={categories} />)}
@@ -158,6 +176,12 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 28,
         fontWeight: '700',
+    },
+
+    subTitle: {
+        fontSize: 15,
+        fontWeight: '600',
+        fontStyle: 'italic',
     },
 
     actions: {

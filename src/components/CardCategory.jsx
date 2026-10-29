@@ -68,13 +68,11 @@ const variantStyles={
             backgroundColor: '#f8873d',
             borderRadius: 16,
             paddingHorizontal: 9,
-            paddingVertical: 8,
-        },
-        category: {
+            paddingVertical: 3,
             flexDirection: 'row',
-            alignItems: 'center',            
+            alignItems: 'center',   
         },
-        icon: {fontSize: 28},
+        icon: {fontSize: 22},
         categoryTitle: {fontSize: 18}
     }
 }
