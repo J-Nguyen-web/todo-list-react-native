@@ -65,8 +65,8 @@ export default function AllTaskScreen() {
                 <View style={{flexDirection: 'row',}}>
 
                
-                <Pressable onPress={handleClearFilter}>
-                    <Text style={styles.categoryList}>ALL</Text>
+                <Pressable onPress={handleClearFilter} style={styles.cardContainer}>
+                    <Text style={styles.subTitle}>ALL</Text>
                 </Pressable>
                 <FlatList
                     ref={categoryList}
@@ -211,7 +211,16 @@ const styles = StyleSheet.create({
         flex: 1
     },
 
-        favoriteCategories: {
+    cardContainer: {
+        backgroundColor: '#f8873d',
+        borderRadius: 16,
+        paddingHorizontal: 9,
+        paddingVertical: 3,
+        flexDirection: 'row',
+        alignItems: 'center',   
+    },    
+
+    favoriteCategories: {
         backgroundColor: '#fff',
         width: '100%',
         height: '30%',
