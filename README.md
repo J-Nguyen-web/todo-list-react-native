@@ -75,10 +75,7 @@ The project focuses on practical mobile-development concepts, including componen
 | React Native Reanimated | Animations and transitions |
 | React Native Gesture Handler | Gesture-based interactions |
 | Expo Haptics | Haptic feedback |
-| Expo Linear Gradient | Gradient-based UI styling |
 | Expo DateTimePicker | Native date and time selection |
-| React Native Safe Area Context | Safe-area handling |
-| React Native Screens | Native screen optimization |
 | React Native Element Dropdown | Dropdown selection components |
 | Expo Vector Icons | Interface icons |
 | Lodash | Utility functions |
@@ -92,7 +89,6 @@ The repository separates application source code, static assets, and Expo config
 
 ```text
 todo-list-react-native/
-├── .claude/                 # Project-specific Claude configuration
 ├── assets/                  # Static application assets
 ├── src/                     # Application source code
 ├── App.js                   # Root application component
@@ -101,8 +97,6 @@ todo-list-react-native/
 ├── babel.config.js           # Babel configuration
 ├── package.json              # Dependencies and npm scripts
 ├── package-lock.json         # Locked dependency versions
-├── AGENTS.md                 # Repository guidance
-└── CLAUDE.md                 # Project-specific instructions
 ```
 
 The `src` directory contains the application implementation. Database operations, screens, navigation, reusable components, and related logic are kept within the source code rather than being placed in the root configuration files.
